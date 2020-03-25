@@ -36,7 +36,13 @@ namespace Covid19API.Web
 
         #region API Requests
 
-        public Task<
+        public async Task<IEnumerable<Location>> GetLocationsAsync()
+        {
+            Tuple<ResponseInfo, string> response = await WebClient.DownloadAsync(_builder.GetConfirmedCases(), null)
+                .ConfigureAwait(false);
+            
+            return response.Item2.ExtractLocationsFromRawData();
+        }
 
         #endregion
 
