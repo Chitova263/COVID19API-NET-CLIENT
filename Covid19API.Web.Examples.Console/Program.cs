@@ -8,11 +8,9 @@
         static async Task Main(string[] args)
         {
             Covid19WebAPI api =  new Covid19WebAPI();
-            var locations = await api.GetLocationsAsync();
-            foreach (Location location in locations)
-            {
-                location.ToJson();
-            }
+            var results = await api.GetLatestReportedCasesByLocationAsync("Algeria");
+            results.ToJson();
+            System.Console.WriteLine(results.Location.Country);
         }
     }
 }

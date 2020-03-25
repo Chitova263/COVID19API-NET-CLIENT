@@ -2,6 +2,8 @@ namespace Covid19API.Web
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
     using System.Threading.Tasks;
     using Covid19API.Web.Models;
     using Newtonsoft.Json;
@@ -33,9 +35,12 @@ namespace Covid19API.Web
         /// </summary>
         public IClient WebClient { get; set; }
 
+        #region Public API
 
-        #region API Requests
-
+        /// <summary>
+        ///     Returns all the supported locations asynchronously.
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Location>> GetLocationsAsync()
         {
             Tuple<ResponseInfo, string> response = await WebClient.DownloadAsync(_builder.GetConfirmedCases(), null)
@@ -44,37 +49,70 @@ namespace Covid19API.Web
             return response.Item2.ExtractLocationsFromRawData();
         }
 
-        #endregion
-
-
-        #region Helpers
-        public T DownloadData<T>(string url) where T : BasicModel
+        /// <summary>
+        ///     Returns all the supported locations synchronously.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Location> GetLocations()
         {
-            Tuple<ResponseInfo, T> response = null;
-            response = DownloadDataAlt<T>(url);
-            response.Item2.AddResponseInfo(response.Item1);
-            return response.Item2;
+            Tuple<ResponseInfo, string> response = Task.Run(() => WebClient.DownloadAsync(_builder.GetConfirmedCases(), null)).Result;
+            return response.Item2.ExtractLocationsFromRawData();
         }
 
-        public async Task<T> DownloadDataAsync<T>(string url) where T : BasicModel
-        {     
-            Tuple<ResponseInfo, T> response = null;
-            response = await DownloadDataAltAsync<T>(url).ConfigureAwait(false);
-            response.Item2.AddResponseInfo(response.Item1);  
-            return response.Item2;
-        }
-
-        private Tuple<ResponseInfo, T> DownloadDataAlt<T>(string url)
+        /// <summary>
+        ///     Returns latest report for a country asynchronously.
+        /// </summary>
+        /// <param name="country"></param>
+        /// <returns></returns>
+        public async Task<ReportedCase> GetLatestReportedCasesByLocationAsync(string country)
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            return WebClient.DownloadJson<T>(url, headers);
+            List<string> data = new List<string>();
+
+            var task1 = WebClient.DownloadAsync(_builder.GetConfirmedCases());
+            var task2 = WebClient.DownloadAsync(_builder.GetDeathCases());
+
+            Task.WaitAll(task1, task2);
+
+            var confirmed = await task1.ConfigureAwait(false);
+            var deaths = await task2.ConfigureAwait(false);
+
+            var confirmedCases = confirmed.Item2
+                .ExtractLatestFromRawData()
+                .FirstOrDefault(x => x.Contains(country));
+            
+            var deathsReported = deaths.Item2
+                .ExtractLatestFromRawData()
+                .FirstOrDefault(x => x.Contains(country));
+
+            var headers = confirmed.Item2.ExtractHeaders();
+
+            ReportedCase latestReport = new ReportedCase
+            {
+                Location = new Location
+                {
+                    Country = confirmedCases[1],
+                    Province = confirmedCases[0],
+                    Latitude = Double.Parse(confirmedCases[2].Trim()),
+                    longitude =  Double.Parse(confirmedCases[3].Trim())
+                },
+                Confirmed = Int32.Parse(confirmedCases.Last()),
+                Deaths = Int32.Parse(deathsReported.Last()),
+                Timestamp = DateTime.Parse(headers.Last(), CultureInfo.InvariantCulture).Date
+            };
+
+            return latestReport;
         }
 
-        private Task<Tuple<ResponseInfo, T>> DownloadDataAltAsync<T>(string url)
+        /// <summary>
+        ///      Returns latest report for a country synchronously.
+        /// </summary>
+        /// <param name="country"></param>
+        /// <returns></returns>
+        private ReportedCase GetLatestReportedCasesByLocation(string country)
         {
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            return WebClient.DownloadJsonAsync<T>(url, headers);
+            throw new NotImplementedException();
         }
+
         #endregion
     }
 }

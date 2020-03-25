@@ -26,5 +26,21 @@ namespace Covid19API.Web
 
             return locations;
         }
-    }
+
+        public static List<string[]> ExtractLatestFromRawData(this string raw)
+        {
+            return raw
+                .Split(new[] { '\n' }, StringSplitOptions.None)
+                .Select(x => Tokenizer.Tokenize(x))
+                .ToList();
+        }
+
+        public static string[] ExtractHeaders(this string raw)
+        {
+            var result = raw
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+            
+            return Tokenizer.Tokenize(result[0]);        
+        } 
+    }     
 }
