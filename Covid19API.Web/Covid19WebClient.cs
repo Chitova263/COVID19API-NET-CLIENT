@@ -11,7 +11,7 @@ namespace Covid19API.Web
 
     public sealed class Covid19WebClient : IClient
     {
-         private readonly Encoding _encoding = Encoding.UTF8;
+        private readonly Encoding _encoding = Encoding.UTF8;
         private readonly HttpClient _client;
         public JsonSerializerSettings JsonSettings { get; set; }
         private const string UnknownErrorJson = "{\"error\": { \"status\": 0, \"message\": \"Covid19API.Web - Unkown Covid19 Error\" }}";
@@ -67,33 +67,41 @@ namespace Covid19API.Web
 
         public Tuple<ResponseInfo, byte[]> DownloadRaw(string url, Dictionary<string, string> headers = null)
         {
-            if (headers != null)
-            {
+            if (headers != null) 
                 AddHeaders(headers);
-            }
+        
             using(HttpResponseMessage response = Task.Run(() => _client.GetAsync(url)).Result)
             {
-                return new Tuple<ResponseInfo, byte[]>(new ResponseInfo
-                {
-                StatusCode = response.StatusCode,
-                    Headers = ConvertHeaders(response.Headers)
-                }, Task.Run(() => response.Content.ReadAsByteArrayAsync()).Result);
+                byte[] bytes = Task.Run(() => response.Content.ReadAsByteArrayAsync()).Result;
+
+                return new Tuple<ResponseInfo, byte[]>(
+                    new ResponseInfo
+                    {
+                        StatusCode = response.StatusCode,
+                        Headers = ConvertHeaders(response.Headers)
+                    }, 
+                    bytes
+                );
             }
         }
 
         public async Task<Tuple<ResponseInfo, byte[]>> DownloadRawAsync(string url, Dictionary<string, string> headers = null)
         {
             if (headers != null)
-            {
                 AddHeaders(headers);
-            }
+
             using(HttpResponseMessage response = await _client.GetAsync(url).ConfigureAwait(false))
             {
-                return new Tuple<ResponseInfo, byte[]>(new ResponseInfo
-                {
-                StatusCode = response.StatusCode,
-                    Headers = ConvertHeaders(response.Headers)
-                }, await response.Content.ReadAsByteArrayAsync());
+                byte[] bytes = await response.Content.ReadAsByteArrayAsync();
+                
+                return new Tuple<ResponseInfo, byte[]>(
+                    new ResponseInfo
+                    {
+                        StatusCode = response.StatusCode,
+                        Headers = ConvertHeaders(response.Headers)
+                    }, 
+                    bytes
+                );
             }
         }
 
@@ -104,7 +112,7 @@ namespace Covid19API.Web
             {
                 foreach (string headerValue in headerPair.Value)
                 {
-                newHeaders.Add(headerPair.Key, headerValue);
+                 newHeaders.Add(headerPair.Key, headerValue);
                 }
             }
             return newHeaders;

@@ -6,6 +6,7 @@ namespace Covid19API.Web
 
         public Covid19WebBuilder() { }
 
+        //improve and use StringBuilder class
         public string GetRecoveredCases() => $"{APIBase}time_series_covid19_confirmed_global.csv";
         public string GetConfirmedCases() => $"{APIBase}time_series_covid19_confirmed_global.csv";
         public string GetDeathCases() => $"{APIBase}time_series_covid19_confirmed_global.csv";

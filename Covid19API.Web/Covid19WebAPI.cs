@@ -35,21 +35,8 @@ namespace Covid19API.Web
 
 
         #region API Requests
-            
-        public Task<string> GetRecoveredCases()
-        {
-            return DownloadDataAlt<>(_builder.GetRecoveredCases())
-        }
 
-        public Task<dynamic> GetDeathCases()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<dynamic> GetDiscoveredCases()
-        {
-            throw new NotImplementedException();
-        }
+        public Task<
 
         #endregion
 
