@@ -8,6 +8,7 @@ namespace Covid19API.Web
 
     public sealed class Covid19WebAPI : IDisposable
     {
+        private readonly Covid19WebBuilder _builder;
         public Covid19WebAPI()
         {
             WebClient = new Covid19WebClient()
@@ -17,6 +18,8 @@ namespace Covid19API.Web
                     NullValueHandling = NullValueHandling.Ignore
                 }
             };
+
+            _builder = new Covid19WebBuilder();
         }
 
         public void Dispose()
@@ -29,6 +32,27 @@ namespace Covid19API.Web
         ///     A custom WebClient, used for Unit-Testing
         /// </summary>
         public IClient WebClient { get; set; }
+
+
+        #region API Requests
+            
+        public Task<string> GetRecoveredCases()
+        {
+            return DownloadDataAlt<>(_builder.GetRecoveredCases())
+        }
+
+        public Task<dynamic> GetDeathCases()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<dynamic> GetDiscoveredCases()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
 
         #region Helpers
         public T DownloadData<T>(string url) where T : BasicModel
