@@ -8,6 +8,7 @@ namespace Covid19API.Web
     using Newtonsoft.Json;
     using System.Net.Http.Headers;
     using System.Net;
+    
 
     public sealed class Covid19WebClient : IClient
     {
@@ -93,7 +94,7 @@ namespace Covid19API.Web
             using(HttpResponseMessage response = await _client.GetAsync(url).ConfigureAwait(false))
             {
                 byte[] bytes = await response.Content.ReadAsByteArrayAsync();
-                
+
                 return new Tuple<ResponseInfo, byte[]>(
                     new ResponseInfo
                     {
