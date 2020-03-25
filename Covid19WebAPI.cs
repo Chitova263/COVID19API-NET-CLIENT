@@ -1,11 +1,22 @@
 namespace Covid19API.Web
 {
     using System;
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using Covid19API.Web.Models;
+    using Newtonsoft.Json;
+
     public sealed class Covid19WebAPI : IDisposable
     {
         public Covid19WebAPI()
         {
-            
+            WebClient = new Covid19WebClient()
+            {   
+                JsonSettings = new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                }
+            };
         }
 
         public void Dispose()
@@ -19,28 +30,34 @@ namespace Covid19API.Web
         /// </summary>
         public IClient WebClient { get; set; }
 
-        /// <summary>
-        ///     Specifies after how many miliseconds should a failed request be retried.
-        /// </summary>
-        public int RetryAfter { get; set; } = 50;
+        #region Helpers
+        public T DownloadData<T>(string url) where T : BasicModel
+        {
+            Tuple<ResponseInfo, T> response = null;
+            response = DownloadDataAlt<T>(url);
+            response.Item2.AddResponseInfo(response.Item1);
+            return response.Item2;
+        }
 
-        /// <summary>
-        ///     Should a failed request (specified by <see cref="RetryErrorCodes"/> be automatically retried or not.
-        /// </summary>
-        public bool UseAutoRetry { get; set; } = false;
+        public async Task<T> DownloadDataAsync<T>(string url) where T : BasicModel
+        {     
+            Tuple<ResponseInfo, T> response = null;
+            response = await DownloadDataAltAsync<T>(url).ConfigureAwait(false);
+            response.Item2.AddResponseInfo(response.Item1);  
+            return response.Item2;
+        }
 
-        /// <summary>
-        ///     Maximum number of tries for one failed request.
-        /// </summary>
-        public int RetryTimes { get; set; } = 10;
+        private Tuple<ResponseInfo, T> DownloadDataAlt<T>(string url)
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return WebClient.DownloadJson<T>(url, headers);
+        }
 
-        /// <summary>
-        ///     Whether a failure of type "Too Many Requests" should use up one of the allocated retry attempts.
-        /// </summary>
-        public bool TooManyRequestsConsumesARetry { get; set; } = false;
-
-        /// <summary>
-        ///     Error codes that will trigger auto-retry if <see cref="UseAutoRetry"/> is enabled.
-        /// </summary>
+        private Task<Tuple<ResponseInfo, T>> DownloadDataAltAsync<T>(string url)
+        {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            return WebClient.DownloadJsonAsync<T>(url, headers);
+        }
+        #endregion
     }
 }
