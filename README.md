@@ -11,12 +11,12 @@ Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe ac
 
 #### .NET CLI
 ```
-dotnet add package COVID19API-NET --version 1.0.0
+dotnet add package COVID19API-NET-CLIENT --version 1.0.0
 ```
 
 #### PACKAGE MANAGER
 ```
-Install-Package COVID19API-NET -Version 1.0.0
+Install-Package COVID19API-NET-CLIENT -Version 1.0.0
 ```
 
 ## Example
