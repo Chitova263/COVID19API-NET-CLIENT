@@ -2,7 +2,6 @@ namespace Covid19API.Web
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -84,32 +83,20 @@ namespace Covid19API.Web
 
             //parse the response and extract required information
             string[] deaths = deathsResponse.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None);
+                .ParseResponse();
 
             string[] confirmed = confirmedResponse.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None);
+                .ParseResponse();
                 
+            Validators.EnsureTimestampAndHeadersMatch(deaths, confirmed);
 
-            // Make sure all data has the same header, so the Timestamps match:
-            if(!new[] { deaths[0], confirmed[0] }.All(x => string.Equals(x, confirmed[0], StringComparison.InvariantCulture)))
-            {
-                throw new Exception($"Different Headers (Confirmed = {confirmed[0]}, Deaths = {deaths[0]}");
-            }
-
-            // Make sure all data has the same number of rows, or we can stop here:
-            if(!new[] { deaths.Length, confirmed.Length}.All(x => x == confirmed.Length))
-            {
-                throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
-            }
-
+            Validators.EnsureDataHasEqualRows(deaths, confirmed);
+            
             // Extract header row
             string[] header = Tokenizer.Tokenize(confirmed[0]).ToArray();
 
             // Get Timestamps
-            DateTime[] timestamps = header
-                .Skip(4)
-                .Select(x => DateTime.Parse(x,CultureInfo.InvariantCulture))
-                .ToArray();
+            DateTime[] timestamps = header.ExtractTimestamps();
 
             // Get Required Data
             LatestReport latestReport = confirmed
@@ -162,34 +149,23 @@ namespace Covid19API.Web
             Tuple<ResponseInfo, string> confirmedResponse = await GetConfirmedTask.ConfigureAwait(false); 
 
             //parse the response and extract required information
-            string[] deaths = deathsResponse.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None);
+            string[] deaths = deathsResponse.Item2.ParseResponse();
 
-            string[] confirmed = confirmedResponse.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None);
-
+            string[] confirmed = confirmedResponse.Item2.ParseResponse();
 
             // Make sure all data has the same header, so the Timestamps match:
-            if(!new[] { deaths[0], confirmed[0] }.All(x => string.Equals(x, confirmed[0], StringComparison.InvariantCulture)))
-            {
-                throw new Exception($"Different Headers (Confirmed = {confirmed[0]}, Deaths = {deaths[0]}");
-            }
+            Validators.EnsureTimestampAndHeadersMatch(deaths, confirmed);
 
             // Make sure all data has the same number of rows, or we can stop here:
-            if(!new[] { deaths.Length, confirmed.Length}.All(x => x == confirmed.Length))
-            {
-                throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
-            }
+            Validators.EnsureDataHasEqualRows(deaths, confirmed);
 
             // Extract header row
             string[] header = Tokenizer.Tokenize(confirmed[0]).ToArray();
 
             // Get Timestamps
-            DateTime[] timestamps = header
-                .Skip(4)
-                .Select(x => DateTime.Parse(x,CultureInfo.InvariantCulture))
-                .ToArray();
-            
+            DateTime[] timestamps = header.ExtractTimestamps();
+
+            // --- Improve Linq Query ---   
             FullReport fullReport = confirmed
                 .Skip(1)
                 .SkipLast(1)
@@ -260,33 +236,22 @@ namespace Covid19API.Web
             reports.AddResponseInfo(deathsResponse.Item1);
 
             //parse the response and extract required information
-            string[] deaths = deathsResponse.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None);
+            string[] deaths = deathsResponse.Item2.ParseResponse();
 
-            string[] confirmed = confirmedResponse.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None);
-
-
+            string[] confirmed = confirmedResponse.Item2.ParseResponse();
+            
             // Make sure all data has the same header, so the Timestamps match:
-            if(!new[] { deaths[0], confirmed[0] }.All(x => string.Equals(x, confirmed[0], StringComparison.InvariantCulture)))
-            {
-                throw new Exception($"Different Headers (Confirmed = {confirmed[0]}, Deaths = {deaths[0]}");
-            }
+            Validators.EnsureTimestampAndHeadersMatch(deaths, confirmed);
 
             // Make sure all data has the same number of rows, or we can stop here:
-            if(!new[] { deaths.Length, confirmed.Length}.All(x => x == confirmed.Length))
-            {
-                throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
-            }
+            Validators.EnsureDataHasEqualRows(deaths, confirmed);
 
             // Extract header row
             string[] header = Tokenizer.Tokenize(confirmed[0]).ToArray();
 
             // Get Timestamps
-            DateTime[] timestamps = header
-                .Skip(4)
-                .Select(x => DateTime.Parse(x,CultureInfo.InvariantCulture))
-                .ToArray();
+            DateTime[] timestamps = header.ExtractTimestamps();
+
 
             reports.ReportsList = confirmed
                 .Skip(1)

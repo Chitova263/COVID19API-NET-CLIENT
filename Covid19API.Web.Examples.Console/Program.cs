@@ -8,8 +8,7 @@
         public static ICovid19WebAPI API = new Covid19WebAPI();
         static async Task Main(string[] args)
         {
-            var reports = await API.GetReportsAsync();
-            reports.ToJson();
+           await GetLocationsAsync();
         }
 
         static async Task GetFullReportAsync()
