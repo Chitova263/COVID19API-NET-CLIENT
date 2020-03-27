@@ -1,6 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <Authors>Nigel Mukandi</Authors>
+    <Copyright>MIT</Copyright>
+    <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+    <Owners>Nigel Mukandi</Owners>
+    <PackageProjectUrl>https://github.com/Chitova263/COVID19API-NET</PackageProjectUrl>
+    <Summary>A .NET Client for the Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</Summary>
+    <Title>COVID19API-NET</Title>
+    <Description>A .NET Client for the Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</Description>
+    <PackageId>COVID19API-NET</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
