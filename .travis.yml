@@ -8,3 +8,5 @@ install:
 script:
  - dotnet build
  - dotnet test Tests/Covid19API.UnitTests/Covid19API.UnitTests.csproj
+
+ 
