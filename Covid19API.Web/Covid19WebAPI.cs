@@ -50,7 +50,7 @@ namespace Covid19API.Web
 
             //parse response and extract locations
             locations.LocationsList = response.Item2
-                .Split(new[] { '\n' }, StringSplitOptions.None)
+                .ParseResponse()
                 .Skip(1)
                 .SkipLast(1)
                 .Select(x => Tokenizer.Tokenize(x))
@@ -126,7 +126,7 @@ namespace Covid19API.Web
                 .Deaths;
 
             //add the response info to locations object
-            latestReport.AddResponseInfo(deathsResponse.Item1);
+            latestReport.AddResponseInfo(confirmedResponse.Item1);
 
             latestReport.Deaths = numberOfDeaths;
 

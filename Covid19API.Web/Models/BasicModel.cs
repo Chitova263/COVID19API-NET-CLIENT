@@ -1,13 +1,12 @@
 namespace Covid19API.Web.Models
 {
-    using Newtonsoft.Json;
     using System.Net;
     using System.Runtime.Serialization;
 
     [DataContract]
     public abstract class BasicModel
     {
-        [JsonProperty("error")]
+        //[JsonProperty("error")]
         //public Error Error { get; set; }
 
         private ResponseInfo _info;
@@ -18,8 +17,10 @@ namespace Covid19API.Web.Models
 
         public string Header(string key) => _info.Headers?.Get(key);
 
-        public WebHeaderCollection Headers() => _info.Headers;
+        [DataMember]
+        public WebHeaderCollection Headers => _info.Headers;
 
-        public HttpStatusCode StatusCode() => _info.StatusCode;
+        [DataMember]
+        public HttpStatusCode StatusCode => _info.StatusCode;
     }
 }

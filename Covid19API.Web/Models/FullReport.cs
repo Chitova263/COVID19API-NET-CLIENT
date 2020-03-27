@@ -33,5 +33,14 @@ namespace Covid19API.Web.Models
                 })
                 .ToList();
         }
+
+        public class Data
+        {
+            public DateTime Timestamp { get; set; }
+            public int Confirmed { get; set; }
+            public int Deaths { get; set; }
+        }
     }
+
+    
 }
