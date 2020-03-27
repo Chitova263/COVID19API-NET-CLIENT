@@ -16,6 +16,7 @@ namespace Covid19API.Web.Examples.Console
 {
     using System.Threading.Tasks;
     using Covid19API.Web.Models;
+    using Newtonsoft.Json;
 
     class Program
     {
@@ -49,6 +50,17 @@ namespace Covid19API.Web.Examples.Console
             reports.ToJson();
         }
     }
+
+    public static class JsonDumper
+    {
+        public static void ToJson(this object obj)
+        {
+            System.Console.WriteLine(
+                Newtonsoft.Json.JsonConvert.SerializeObject(obj, Formatting.Indented)
+            );
+        }
+    }
+}
 ```
 
 ## Licence
