@@ -9,6 +9,16 @@ Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe ac
 
 ## Nuget
 
+#### .NET CLI
+```
+dotnet add package COVID19API-NET --version 1.0.0
+```
+
+#### PACKAGE MANAGER
+```
+Install-Package COVID19API-NET -Version 1.0.0
+```
+
 ## Example
 
 ```cs
