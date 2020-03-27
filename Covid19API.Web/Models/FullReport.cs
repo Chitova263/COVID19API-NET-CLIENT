@@ -22,7 +22,7 @@ namespace Covid19API.Web.Models
         public List<int> Deaths { get; set; }
         public List<int> Confirmed { get; set; }
 
-        public void AddTimeSeries(string[] deaths, string[] confirmed, DateTime[] timestamps)
+        public void AddTimeSeries(DateTime[] timestamps)
         {
             TimeSeries = Enumerable.Range(1, Deaths.Count - 1)
                 .Select(x => new Data

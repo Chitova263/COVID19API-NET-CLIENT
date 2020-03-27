@@ -8,7 +8,8 @@
         public static ICovid19WebAPI API = new Covid19WebAPI();
         static async Task Main(string[] args)
         {
-            await GetFullReportAsync();
+            var reports = await API.GetReportsAsync();
+            reports.ToJson();
         }
 
         static async Task GetFullReportAsync()
@@ -17,9 +18,10 @@
             fullReport.ToJson();
         }
 
-        static Task<Locations> GetLocationsAsync()
+        static async Task GetLocationsAsync()
         {
-            return API.GetLocationsAsync();
+            Locations locations = await API.GetLocationsAsync();
+            locations.ToJson();
         }
 
         static Task<LatestReport> GetLatestReportAsync(string country)

@@ -56,7 +56,7 @@ namespace Covid19API.Web
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        Task<FullReport> GetFullReportAsync(string country, DateTime start, DateTime end);
+        Task<FullReport> GetFullReportAsync(string country, DateTime start, DateTime end, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 
@@ -65,6 +65,20 @@ namespace Covid19API.Web
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <returns></returns>
-        FullReport GetFullReport(string country, DateTime start, DateTime end);
+        FullReport GetFullReport(string country, DateTime start, DateTime end, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        ///     Returns the full report for all locations
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<Reports> GetReportsAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
+        ///     Returns the full report for all locations
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Reports GetReports(CancellationToken cancellationToken = default);
     }
 }

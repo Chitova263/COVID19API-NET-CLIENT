@@ -219,7 +219,7 @@ namespace Covid19API.Web
                 
                 
             //Build the TimeSeries
-            fullReport.AddTimeSeries(deaths, confirmed, timestamps);
+            fullReport.AddTimeSeries(timestamps);
 
             // Add response info to fullreport
             fullReport.AddResponseInfo(deathsResponse.Item1);
@@ -232,12 +232,93 @@ namespace Covid19API.Web
             throw new NotImplementedException();
         }
 
-        public Task<FullReport> GetFullReportAsync(string country, DateTime start, DateTime end)
+        public Task<FullReport> GetFullReportAsync(string country, DateTime start, DateTime end, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public FullReport GetFullReport(string country, DateTime start, DateTime end)
+        public FullReport GetFullReport(string country, DateTime start, DateTime end, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Reports> GetReportsAsync(CancellationToken cancellationToken = default)
+        {
+            Task<Tuple<ResponseInfo, string>> GetDeathsTask = WebClient.DownloadAsync(_builder.GetDeathCases());
+            Task<Tuple<ResponseInfo, string>> GetConfirmedTask = WebClient.DownloadAsync(_builder.GetConfirmedCases());
+
+            Task.WaitAll(new Task[] { GetDeathsTask, GetConfirmedTask}, cancellationToken);
+
+            Tuple<ResponseInfo, string> deathsResponse = await GetDeathsTask.ConfigureAwait(false);
+            Tuple<ResponseInfo, string> confirmedResponse = await GetConfirmedTask.ConfigureAwait(false); 
+
+            Reports reports = new Reports
+            {
+                ReportsList = new List<FullReport>()
+            };
+
+            reports.AddResponseInfo(deathsResponse.Item1);
+
+            //parse the response and extract required information
+            string[] deaths = deathsResponse.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+
+            string[] confirmed = confirmedResponse.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+
+
+            // Make sure all data has the same header, so the Timestamps match:
+            if(!new[] { deaths[0], confirmed[0] }.All(x => string.Equals(x, confirmed[0], StringComparison.InvariantCulture)))
+            {
+                throw new Exception($"Different Headers (Confirmed = {confirmed[0]}, Deaths = {deaths[0]}");
+            }
+
+            // Make sure all data has the same number of rows, or we can stop here:
+            if(!new[] { deaths.Length, confirmed.Length}.All(x => x == confirmed.Length))
+            {
+                throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
+            }
+
+            // Extract header row
+            string[] header = Tokenizer.Tokenize(confirmed[0]).ToArray();
+
+            // Get Timestamps
+            DateTime[] timestamps = header
+                .Skip(4)
+                .Select(x => DateTime.Parse(x,CultureInfo.InvariantCulture))
+                .ToArray();
+
+            reports.ReportsList = confirmed
+                .Skip(1)
+                .SkipLast(1)
+                .Select(x => Tokenizer.Tokenize(x))
+                .Select(x => new FullReport
+                {
+                    Country = x[1],
+                    Province = x[0],
+                    Latitude = Double.Parse(x[2].Trim()),
+                    Longitude =  Double.Parse(x[3].Trim()),
+                    Confirmed = x.Skip(4).Select(p => Int32.Parse(p)).ToList(),
+                })
+                .ToList();
+
+            var result = deaths
+                    .Skip(1)
+                    .SkipLast(1)
+                    .Select(x => Tokenizer.Tokenize(x))
+                    .Select(x => x.Skip(4).Select(p => Int32.Parse(p)).ToList())
+                    .ToList();
+            
+            for (int i = 0; i < result.Count; i++)
+            {
+                reports.ReportsList[i].Deaths = result[i];
+                reports.ReportsList[i].AddTimeSeries(timestamps);
+            }
+                    
+            return reports;
+        }
+
+        public Reports GetReports(CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
