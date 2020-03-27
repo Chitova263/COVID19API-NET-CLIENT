@@ -1,4 +1,4 @@
-# COVID19API-NET v1
+# COVID19API-NET
 
 [![Build Status](https://travis-ci.com/Chitova263/COVID19API-NET.svg?token=MDACaqCYzSj6Yqd8uBt5&branch=master)](https://travis-ci.com/Chitova263/COVID19API-NET)
 
@@ -8,6 +8,16 @@ A .NET Client for the Coronavirus COVID-19 (2019-nCoV) [Data Repository](https:/
 Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). The disease was first identified in 2019 in Wuhan, the capital of Hubei, China, and has since spread globally, resulting in the 2019–20 coronavirus pandemic. [Wikipedia](https://en.wikipedia.org/wiki/Coronavirus_disease_2019)
 
 ## Nuget
+
+#### .NET CLI
+```
+dotnet add package COVID19API-NET --version 1.0.0
+```
+
+#### PACKAGE MANAGER
+```
+Install-Package COVID19API-NET -Version 1.0.0
+```
 
 ## Example
 
@@ -28,7 +38,7 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task GetFullReportAsync()
         {
-            FullReport fullReport = await API.GetFullReportAsync("Zimbabwe");
+            FullReport fullReport = await API.GetFullReportAsync("Germany");
             fullReport.ToJson();
         }
 
