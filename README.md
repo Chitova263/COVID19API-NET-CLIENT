@@ -1,4 +1,4 @@
-# COVID19API-NET
+# COVID19API-NET-CLIENT
 
 [![Build Status](https://travis-ci.com/Chitova263/COVID19API-NET.svg?token=MDACaqCYzSj6Yqd8uBt5&branch=master)](https://travis-ci.com/Chitova263/COVID19API-NET)
 
