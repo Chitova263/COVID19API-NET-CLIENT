@@ -1,10 +1,9 @@
 namespace Covid19API.Web
 {
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
-    using Covid19API.Web.Models;
+    using Microsoft.Extensions.DependencyInjection;
     using TinyCsvParser.Tokenizer.RFC4180;
 
     public static class Extensions
@@ -23,6 +22,11 @@ namespace Covid19API.Web
                 .Skip(4)
                 .Select(x => DateTime.Parse(x, CultureInfo.InvariantCulture))
                 .ToArray();
+        }
+
+        public static void AddCovid19Client(this IServiceCollection services)
+        {
+            services.AddTransient<ICovid19WebAPI, Covid19WebAPI>();
         }
     }     
 }

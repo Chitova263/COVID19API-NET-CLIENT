@@ -4,5 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="COVID19API-NET" Version="1.0.0" />
+  </ItemGroup>
 
 </Project>
