@@ -40,24 +40,5 @@ namespace Covid19API.Web
         /// <param name="headers"></param>
         /// <returns></returns>
         Task<Tuple<ResponseInfo, byte[]>> DownloadRawAsync(string url, Dictionary<string, string> headers = null);
-
-        /// <summary>
-        ///     Downloads data from an URL and converts it to an object
-        /// </summary>
-        /// <typeparam name="T">The Type which the object gets converted to</typeparam>
-        /// <param name="url">An URL</param>
-        /// <param name="headers"></param>
-        /// <returns></returns>
-        Tuple<ResponseInfo, T> DownloadJson<T>(string url, Dictionary<string, string> headers = null);
-
-        /// <summary>
-        ///     Downloads data asynchronously from an URL and converts it to an object
-        /// </summary>
-        /// <typeparam name="T">The Type which the object gets converted to</typeparam>
-        /// <param name="url">An URL</param>
-        /// <param name="headers"></param>
-        /// <returns></returns>
-        Task<Tuple<ResponseInfo, T>> DownloadJsonAsync<T>(string url, Dictionary<string, string> headers = null);
-
     }
 }

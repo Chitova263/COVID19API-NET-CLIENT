@@ -4,11 +4,13 @@ namespace Covid19API.Web
     using System.Collections.Generic;
     using System.Globalization;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Covid19API.Web.Models;
     using Newtonsoft.Json;
+    using TinyCsvParser.Tokenizer.RFC4180;
 
-    public sealed class Covid19WebAPI : IDisposable
+    public sealed class Covid19WebAPI : IDisposable, ICovid19WebAPI
     {
         private readonly Covid19WebBuilder _builder;
         public Covid19WebAPI()
@@ -24,95 +26,220 @@ namespace Covid19API.Web
             _builder = new Covid19WebBuilder();
         }
 
+        public IClient WebClient { get; set; }
+
+        public static RFC4180Tokenizer Tokenizer => new RFC4180Tokenizer(new Options('"', '\\', ','));
+
         public void Dispose()
         {
             WebClient.Dispose();
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        ///     A custom WebClient, used for Unit-Testing
-        /// </summary>
-        public IClient WebClient { get; set; }
-
-        #region Public API
-
-        /// <summary>
-        ///     Returns all the supported locations asynchronously.
-        /// </summary>
-        /// <returns></returns>
-        public async Task<IEnumerable<Location>> GetLocationsAsync()
+        public async Task<Locations> GetLocationsAsync(CancellationToken cancellationToken = default)
         {
-            Tuple<ResponseInfo, string> response = await WebClient.DownloadAsync(_builder.GetConfirmedCases(), null)
+            Tuple<ResponseInfo, string> response = await WebClient.DownloadAsync(_builder.GetDeathCases())
                 .ConfigureAwait(false);
             
-            return response.Item2.ExtractLocationsFromRawData();
-        }
-
-        /// <summary>
-        ///     Returns all the supported locations synchronously.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<Location> GetLocations()
-        {
-            Tuple<ResponseInfo, string> response = Task.Run(() => WebClient.DownloadAsync(_builder.GetConfirmedCases(), null)).Result;
-            return response.Item2.ExtractLocationsFromRawData();
-        }
-
-        /// <summary>
-        ///     Returns latest report for a country asynchronously.
-        /// </summary>
-        /// <param name="country"></param>
-        /// <returns></returns>
-        public async Task<ReportedCase> GetLatestReportedCasesByLocationAsync(string country)
-        {
-            List<string> data = new List<string>();
-
-            var task1 = WebClient.DownloadAsync(_builder.GetConfirmedCases());
-            var task2 = WebClient.DownloadAsync(_builder.GetDeathCases());
-
-            Task.WaitAll(task1, task2);
-
-            var confirmed = await task1.ConfigureAwait(false);
-            var deaths = await task2.ConfigureAwait(false);
-
-            var confirmedCases = confirmed.Item2
-                .ExtractLatestFromRawData()
-                .FirstOrDefault(x => x.Contains(country));
-            
-            var deathsReported = deaths.Item2
-                .ExtractLatestFromRawData()
-                .FirstOrDefault(x => x.Contains(country));
-
-            var headers = confirmed.Item2.ExtractHeaders();
-
-            ReportedCase latestReport = new ReportedCase
+            Locations locations = new Locations
             {
-                Location = new Location
-                {
-                    Country = confirmedCases[1],
-                    Province = confirmedCases[0],
-                    Latitude = Double.Parse(confirmedCases[2].Trim()),
-                    longitude =  Double.Parse(confirmedCases[3].Trim())
-                },
-                Confirmed = Int32.Parse(confirmedCases.Last()),
-                Deaths = Int32.Parse(deathsReported.Last()),
-                Timestamp = DateTime.Parse(headers.Last(), CultureInfo.InvariantCulture).Date
+                LocationsList = new List<Location>()
             };
 
-            return latestReport;
+            //add the response info to locations object
+            locations.AddResponseInfo(response.Item1);
+
+            //parse response and extract locations
+            locations.LocationsList = response.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None)
+                .Skip(1)
+                .SkipLast(1)
+                .Select(x => Tokenizer.Tokenize(x))
+                .Select(x => new Location
+                {
+                    Country = x[1],
+                    Province = x[0],
+                    Latitude = Double.Parse(x[2].Trim()),
+                    Longitude =  Double.Parse(x[3].Trim())
+                })
+                .ToList();
+                
+            return locations;    
         }
 
-        /// <summary>
-        ///      Returns latest report for a country synchronously.
-        /// </summary>
-        /// <param name="country"></param>
-        /// <returns></returns>
-        private ReportedCase GetLatestReportedCasesByLocation(string country)
+        public Locations GetLocations(CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        #endregion
+        public async Task<LatestReport> GetLatestReportAsync(string country, CancellationToken cancellationToken = default)
+        {
+            Task<Tuple<ResponseInfo, string>> GetDeathsTask = WebClient.DownloadAsync(_builder.GetDeathCases());
+            Task<Tuple<ResponseInfo, string>> GetConfirmedTask = WebClient.DownloadAsync(_builder.GetConfirmedCases());
+
+            Task.WaitAll(new Task[] { GetDeathsTask, GetConfirmedTask}, cancellationToken);
+
+            Tuple<ResponseInfo, string> deathsResponse = await GetDeathsTask.ConfigureAwait(false);
+            Tuple<ResponseInfo, string> confirmedResponse = await GetConfirmedTask.ConfigureAwait(false); 
+
+            //parse the response and extract required information
+            string[] deaths = deathsResponse.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+
+            string[] confirmed = confirmedResponse.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+                
+
+            // Make sure all data has the same header, so the Timestamps match:
+            if(!new[] { deaths[0], confirmed[0] }.All(x => string.Equals(x, confirmed[0], StringComparison.InvariantCulture)))
+            {
+                throw new Exception($"Different Headers (Confirmed = {confirmed[0]}, Deaths = {deaths[0]}");
+            }
+
+            // Make sure all data has the same number of rows, or we can stop here:
+            if(!new[] { deaths.Length, confirmed.Length}.All(x => x == confirmed.Length))
+            {
+                throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
+            }
+
+            // Extract header row
+            string[] header = Tokenizer.Tokenize(confirmed[0]).ToArray();
+
+            // Get Timestamps
+            DateTime[] timestamps = header
+                .Skip(4)
+                .Select(x => DateTime.Parse(x,CultureInfo.InvariantCulture))
+                .ToArray();
+
+            // Get Required Data
+            LatestReport latestReport = confirmed
+                .Skip(1)
+                .SkipLast(1)
+                .Select(x => Tokenizer.Tokenize(x))
+                .Select(x => new LatestReport
+                {
+                    Country = x[1],
+                    Province = x[0],
+                    Latitude = Double.Parse(x[2].Trim()),
+                    Longitude =  Double.Parse(x[3].Trim()),
+                    Confirmed = Int32.Parse(x.Last()),
+                    Timestamp = timestamps.Last() 
+                })
+                .FirstOrDefault(x => x.Country == country);
+            
+            int numberOfDeaths = deaths
+                .Skip(1)
+                .SkipLast(1)
+                .Select(x => Tokenizer.Tokenize(x))
+                .Select(x => new {
+                    Country = x[1],
+                    Deaths = Int32.Parse(x.Last()) 
+                })
+                .FirstOrDefault(x => x.Country == country)
+                .Deaths;
+
+            //add the response info to locations object
+            latestReport.AddResponseInfo(deathsResponse.Item1);
+
+            latestReport.Deaths = numberOfDeaths;
+
+            return latestReport;
+        }
+
+        public LatestReport GetLatestReport(string country, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<FullReport> GetFullReportAsync(string country, CancellationToken cancellationToken = default)
+        {
+            Task<Tuple<ResponseInfo, string>> GetDeathsTask = WebClient.DownloadAsync(_builder.GetDeathCases());
+            Task<Tuple<ResponseInfo, string>> GetConfirmedTask = WebClient.DownloadAsync(_builder.GetConfirmedCases());
+
+            Task.WaitAll(new Task[] { GetDeathsTask, GetConfirmedTask}, cancellationToken);
+
+            Tuple<ResponseInfo, string> deathsResponse = await GetDeathsTask.ConfigureAwait(false);
+            Tuple<ResponseInfo, string> confirmedResponse = await GetConfirmedTask.ConfigureAwait(false); 
+
+            //parse the response and extract required information
+            string[] deaths = deathsResponse.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+
+            string[] confirmed = confirmedResponse.Item2
+                .Split(new[] { '\n' }, StringSplitOptions.None);
+
+
+            // Make sure all data has the same header, so the Timestamps match:
+            if(!new[] { deaths[0], confirmed[0] }.All(x => string.Equals(x, confirmed[0], StringComparison.InvariantCulture)))
+            {
+                throw new Exception($"Different Headers (Confirmed = {confirmed[0]}, Deaths = {deaths[0]}");
+            }
+
+            // Make sure all data has the same number of rows, or we can stop here:
+            if(!new[] { deaths.Length, confirmed.Length}.All(x => x == confirmed.Length))
+            {
+                throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
+            }
+
+            // Extract header row
+            string[] header = Tokenizer.Tokenize(confirmed[0]).ToArray();
+
+            // Get Timestamps
+            DateTime[] timestamps = header
+                .Skip(4)
+                .Select(x => DateTime.Parse(x,CultureInfo.InvariantCulture))
+                .ToArray();
+            
+            FullReport fullReport = confirmed
+                .Skip(1)
+                .SkipLast(1)
+                .Select(x => Tokenizer.Tokenize(x))
+                .Select(x => new FullReport
+                {
+                    Country = x[1],
+                    Province = x[0],
+                    Latitude = Double.Parse(x[2].Trim()),
+                    Longitude =  Double.Parse(x[3].Trim()),
+                    Confirmed = x.Skip(4).Select(p => Int32.Parse(p)).ToList()
+                })
+                .FirstOrDefault(x => x.Country == country);
+
+            // List of all deaths
+            fullReport.Deaths = deaths
+                .Skip(1)
+                .SkipLast(1)
+                .Select(x => Tokenizer.Tokenize(x))
+                .Select(x => new 
+                {
+                    Country = x[1],
+                    Deaths = x.Skip(4).Select(p => Int32.Parse(p)).ToList()
+                })
+                .FirstOrDefault(x => x.Country == country)
+                .Deaths;
+                
+                
+            //Build the TimeSeries
+            fullReport.AddTimeSeries(deaths, confirmed, timestamps);
+
+            // Add response info to fullreport
+            fullReport.AddResponseInfo(deathsResponse.Item1);
+
+            return fullReport;
+        }
+
+        public FullReport GetFullReport(string country, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<FullReport> GetFullReportAsync(string country, DateTime start, DateTime end)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FullReport GetFullReport(string country, DateTime start, DateTime end)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace Covid19API.Web
                     Country = x[1],
                     Province = x[0],
                     Latitude = Double.Parse(x[2].Trim()),
-                    longitude =  Double.Parse(x[3].Trim())
+                    Longitude =  Double.Parse(x[3].Trim())
                 });
 
             return locations;

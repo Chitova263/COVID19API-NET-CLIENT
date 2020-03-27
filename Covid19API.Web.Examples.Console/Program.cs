@@ -5,12 +5,26 @@
 
     class Program
     {
+        public static ICovid19WebAPI API = new Covid19WebAPI();
         static async Task Main(string[] args)
         {
-            Covid19WebAPI api =  new Covid19WebAPI();
-            var results = await api.GetLatestReportedCasesByLocationAsync("Algeria");
-            results.ToJson();
-            System.Console.WriteLine(results.Location.Country);
+            await GetFullReportAsync();
+        }
+
+        static async Task GetFullReportAsync()
+        {
+            FullReport fullReport = await API.GetFullReportAsync("Zimbabwe");
+            fullReport.ToJson();
+        }
+
+        static Task<Locations> GetLocationsAsync()
+        {
+            return API.GetLocationsAsync();
+        }
+
+        static Task<LatestReport> GetLatestReportAsync(string country)
+        {
+            return API.GetLatestReportAsync(country);
         }
     }
 }

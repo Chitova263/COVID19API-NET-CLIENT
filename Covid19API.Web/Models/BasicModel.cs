@@ -2,7 +2,9 @@ namespace Covid19API.Web.Models
 {
     using Newtonsoft.Json;
     using System.Net;
+    using System.Runtime.Serialization;
 
+    [DataContract]
     public abstract class BasicModel
     {
         [JsonProperty("error")]

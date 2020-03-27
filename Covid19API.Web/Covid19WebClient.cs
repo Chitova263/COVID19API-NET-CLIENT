@@ -9,7 +9,6 @@ namespace Covid19API.Web
     using System.Net.Http.Headers;
     using System.Net;
     
-
     public sealed class Covid19WebClient : IClient
     {
         private readonly Encoding _encoding = Encoding.UTF8;
@@ -17,10 +16,7 @@ namespace Covid19API.Web
         public JsonSerializerSettings JsonSettings { get; set; }
         private const string UnknownErrorJson = "{\"error\": { \"status\": 0, \"message\": \"Covid19API.Web - Unkown Covid19 Error\" }}";
 
-        public Covid19WebClient()
-        {
-            _client = new HttpClient();
-        }
+        public Covid19WebClient() => _client = new HttpClient();
 
         public void Dispose()
         {
@@ -39,33 +35,8 @@ namespace Covid19API.Web
             Tuple<ResponseInfo, byte[]> raw = await DownloadRawAsync(url, headers).ConfigureAwait(false);
             return new Tuple<ResponseInfo, string>(raw.Item1, raw.Item2.Length > 0 ? _encoding.GetString(raw.Item2) : "{}");
         }
-
-        public Tuple<ResponseInfo, T> DownloadJson<T>(string url, Dictionary<string, string> headers = null)
-        {
-            Tuple<ResponseInfo, string> response = Download(url, headers);
-            try
-            {
-                return new Tuple<ResponseInfo, T>(response.Item1, JsonConvert.DeserializeObject<T>(response.Item2, JsonSettings));
-            }
-            catch (JsonException)
-            {
-                return new Tuple<ResponseInfo, T>(response.Item1, JsonConvert.DeserializeObject<T>(UnknownErrorJson, JsonSettings));
-            }
-        }
-
-        public async Task<Tuple<ResponseInfo, T>> DownloadJsonAsync<T>(string url, Dictionary<string, string> headers = null)
-        {
-            Tuple<ResponseInfo, string> response = await DownloadAsync(url, headers).ConfigureAwait(false);
-            try
-            {
-                return new Tuple<ResponseInfo, T>(response.Item1, JsonConvert.DeserializeObject<T>(response.Item2, JsonSettings));
-            }
-            catch (JsonException)
-            {
-                return new Tuple<ResponseInfo, T>(response.Item1, JsonConvert.DeserializeObject<T>(UnknownErrorJson, JsonSettings));
-            }
-        }
-
+        
+        #region Helper Methods
         public Tuple<ResponseInfo, byte[]> DownloadRaw(string url, Dictionary<string, string> headers = null)
         {
             if (headers != null) 
@@ -126,5 +97,6 @@ namespace Covid19API.Web
                 _client.DefaultRequestHeaders.TryAddWithoutValidation(headerPair.Key, headerPair.Value);
             }
         }
+        #endregion
     }
 }
