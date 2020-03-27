@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Covid19API.Web.Examples.Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Covid19.Web.Examples.Webapi", "Covid19.Web.Examples.Webapi\Covid19.Web.Examples.Webapi.csproj", "{03444C44-F873-4445-A524-E99EE2B4442E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{EB95DD79-0CAA-4E91-AE65-0C7817AAFC57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Covid19API.UnitTests", "Tests\Covid19API.UnitTests\Covid19API.UnitTests.csproj", "{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +62,20 @@ Global
 		{03444C44-F873-4445-A524-E99EE2B4442E}.Release|x64.Build.0 = Release|Any CPU
 		{03444C44-F873-4445-A524-E99EE2B4442E}.Release|x86.ActiveCfg = Release|Any CPU
 		{03444C44-F873-4445-A524-E99EE2B4442E}.Release|x86.Build.0 = Release|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Debug|x64.Build.0 = Debug|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Debug|x86.Build.0 = Debug|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Release|x64.ActiveCfg = Release|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Release|x64.Build.0 = Release|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Release|x86.ActiveCfg = Release|Any CPU
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3EAA16BC-6B00-4AA7-9584-0A1EBF1CE270} = {EB95DD79-0CAA-4E91-AE65-0C7817AAFC57}
 	EndGlobalSection
 EndGlobal
