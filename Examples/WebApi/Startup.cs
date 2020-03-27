@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Covid19API.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,10 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Covid19API.Web;
 
-
-namespace Covid19.Web.Examples.Webapi
+namespace WebApi
 {
     public class Startup
     {
@@ -28,6 +27,7 @@ namespace Covid19.Web.Examples.Webapi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddCovid19API();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

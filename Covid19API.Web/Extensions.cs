@@ -24,7 +24,7 @@ namespace Covid19API.Web
                 .ToArray();
         }
 
-        public static void AddCovid19Client(this IServiceCollection services)
+        public static void AddCovid19API(this IServiceCollection services)
         {
             services.AddTransient<ICovid19WebAPI, Covid19WebAPI>();
         }

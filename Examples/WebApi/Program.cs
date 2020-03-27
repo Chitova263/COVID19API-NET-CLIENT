@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Covid19.Web.Examples.Webapi
+namespace WebApi
 {
     public class Program
     {
