@@ -1,4 +1,4 @@
-# COVID19API-NET v1
+# COVID19API-NET
 
 [![Build Status](https://travis-ci.com/Chitova263/COVID19API-NET.svg?token=MDACaqCYzSj6Yqd8uBt5&branch=master)](https://travis-ci.com/Chitova263/COVID19API-NET)
 
@@ -28,7 +28,7 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task GetFullReportAsync()
         {
-            FullReport fullReport = await API.GetFullReportAsync("Zimbabwe");
+            FullReport fullReport = await API.GetFullReportAsync("Germany");
             fullReport.ToJson();
         }
 
