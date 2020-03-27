@@ -1,6 +1,7 @@
 ﻿namespace Covid19API.Web.Examples.Console
 {
     using System.Threading.Tasks;
+    using Covid19API.Web;
     using Covid19API.Web.Models;
     using Newtonsoft.Json;
 
