@@ -20,5 +20,13 @@ namespace Covid19API.Web
                 throw new Exception($"Different Number of Rows (Confirmed = {confirmed.Length}, Deaths = {deaths.Length}");
             }
         }
+
+        public static void EnsureUrlIsValid(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentException("message", nameof(url));
+            }
+        }
     }
 }

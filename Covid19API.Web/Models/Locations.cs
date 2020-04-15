@@ -1,12 +1,14 @@
+﻿using System.Collections.Generic;
+
 namespace Covid19API.Web.Models
 {
-    using System.Collections.Generic;
-    using System.Runtime.Serialization;
-
-    [DataContract]
-    public class Locations: BasicModel
+    public class Locations: ResponseBase
     {
-        [DataMember]
-        public List<Location> LocationsList { get; set; }
+        public IList<Location> LocationsList { get; set; }
+
+        public Locations()
+        {
+            LocationsList = new List<Location>();
+        }
     }
 }

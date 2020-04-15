@@ -1,11 +1,12 @@
 namespace Covid19API.Web
 {
     using System.Net;
-    
-    public sealed class ResponseInfo
+    using System.Net.Http.Headers;
+
+    public class ResponseInfo
     {
-        public WebHeaderCollection Headers { get; set; }
+        public HttpResponseHeaders Headers { get; set; }
         public HttpStatusCode StatusCode { get; set; }
-        public static readonly ResponseInfo Empty = new ResponseInfo();
+        public string Reason { get; set; }
     }
 }
