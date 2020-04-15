@@ -24,9 +24,25 @@ namespace Covid19API.Web
                 .ToArray();
         }
 
+        public static int? ParseIntSafely(this string number)
+        {
+            int result;
+            return Int32.TryParse(number, out result) ? result : (int?)null;
+        }
+
+        public static double? ParseDoubleSafely(this string number)
+        {
+            if (number == null) return (double?)null;
+
+            double result;
+            return Double.TryParse(number, out result) ? result : (double?)null;
+        }
+
         public static void AddCovid19API(this IServiceCollection services)
         {
-            services.AddTransient<ICovid19WebAPI, Covid19WebAPI>();
+            services.AddTransient<ICovid19Client, Covid19Client>();
         }
+
+        
     }     
 }

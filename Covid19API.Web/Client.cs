@@ -5,25 +5,17 @@ namespace Covid19API.Web
     using System.Net.Http;
     using System.Text;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
     using System.Net.Http.Headers;
     using System.Net;
-    
+
     public sealed class Covid19WebClient : IClient
     {
         private readonly Encoding _encoding = Encoding.UTF8;
         private readonly HttpClient _client;
-        public JsonSerializerSettings JsonSettings { get; set; }
-        private const string UnknownErrorJson = "{\"error\": { \"status\": 0, \"message\": \"Covid19API.Web - Unkown Covid19 Error\" }}";
 
         public Covid19WebClient() => _client = new HttpClient();
 
-        public void Dispose()
-        {
-            _client.Dispose();
-            GC.SuppressFinalize(this);
-        }
-
+       
         public Tuple<ResponseInfo, string> Download(string url, Dictionary<string, string> headers = null)
         {
             Tuple<ResponseInfo, byte[]> raw = DownloadRaw(url, headers);
@@ -36,7 +28,6 @@ namespace Covid19API.Web
             return new Tuple<ResponseInfo, string>(raw.Item1, raw.Item2.Length > 0 ? _encoding.GetString(raw.Item2) : "{}");
         }
         
-        #region Helper Methods
         public Tuple<ResponseInfo, byte[]> DownloadRaw(string url, Dictionary<string, string> headers = null)
         {
             if (headers != null) 
@@ -89,6 +80,7 @@ namespace Covid19API.Web
             }
             return newHeaders;
         }
+
         private void AddHeaders(Dictionary<string, string> headers)
         {
             _client.DefaultRequestHeaders.Clear();
@@ -97,6 +89,12 @@ namespace Covid19API.Web
                 _client.DefaultRequestHeaders.TryAddWithoutValidation(headerPair.Key, headerPair.Value);
             }
         }
-        #endregion
+
+        public void Dispose()
+        {
+            _client.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
     }
 }
