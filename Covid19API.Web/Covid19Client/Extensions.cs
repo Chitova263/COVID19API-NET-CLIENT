@@ -1,4 +1,4 @@
-namespace Covid19API.Web
+namespace Covid19.Client
 {
     using System;
     using System.Globalization;
@@ -16,11 +16,11 @@ namespace Covid19API.Web
                 .Split(new[] { '\n' }, StringSplitOptions.None);
         }
 
-        public static DateTime[] ExtractTimestamps(this string[] header)
+        public static DateTimeOffset[] ExtractTimestamps(this string[] header)
         {
             return header
                 .Skip(4)
-                .Select(x => DateTime.Parse(x, CultureInfo.InvariantCulture))
+                .Select(x => DateTimeOffset.Parse(x, CultureInfo.InvariantCulture))
                 .ToArray();
         }
 
@@ -38,7 +38,7 @@ namespace Covid19API.Web
             return Double.TryParse(number, out result) ? result : (double?)null;
         }
 
-        public static void AddCovid19API(this IServiceCollection services)
+        public static void AddCovid19Client(this IServiceCollection services)
         {
             services.AddTransient<ICovid19Client, Covid19Client>();
         }

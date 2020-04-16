@@ -1,46 +1,33 @@
-//namespace Covid19API.Web.Models
-//{
-//    using System;
-//    using System.Collections.Generic;
-//    using System.Linq;
-//    using System.Runtime.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
-//    [DataContract]
-//    public class FullReport: BasicModel
-//    {
-//        [DataMember]
-//        public string Country { get; set; }
-//        [DataMember]
-//        public string Province { get; set; }
-//        [DataMember]
-//        public double Latitude { get; set; }
-//        [DataMember]
-//        public double Longitude { get; set; }
-//        [DataMember]
-//        public List<Data> TimeSeries { get; set; } = new List<Data>();
+namespace Covid19.Client.Models
+{
+    public class FullReport: ResponseBase
+    {
+        public string Country { get; set; }
+        public List<TimeSeriesData> TimeSeries { get; set; }
 
-//        public List<int> Deaths { get; set; }
-//        public List<int> Confirmed { get; set; }
+        public class TimeSeriesData
+        {
+            public DateTimeOffset Timestamp { get; set; }
+            public int Confirmed { get; set; }
+            public int Deaths { get; set; }
+            public int Recovered { get; set; }
+        }
 
-//        public void AddTimeSeries(DateTime[] timestamps)
-//        {
-//            TimeSeries = Enumerable.Range(1, Deaths.Count - 1)
-//                .Select(x => new Data
-//                {
-//                    Timestamp = timestamps[x],
-//                    Deaths = Deaths[x],
-//                    Confirmed = Confirmed[x]
-//                })
-//                .ToList();
-//        }
-
-//        public class Data
-//        {
-//            public DateTime Timestamp { get; set; }
-//            public int Confirmed { get; set; }
-//            public int Deaths { get; set; }
-//        }
-//    }
-
-    
-//}
+        internal void AddTimeSeries(DateTimeOffset[] timestamps, int[] deaths, int[] recovered, int[] confirmed)
+        {
+            TimeSeries = Enumerable.Range(1, deaths.Length - 1)
+                .Select(x => new TimeSeriesData
+                {
+                    Timestamp = timestamps[x],
+                    Deaths = deaths[x],
+                    Confirmed = confirmed[x],
+                    Recovered = recovered[x]
+                })
+                .ToList();
+        }
+    }
+}

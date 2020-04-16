@@ -20,43 +20,43 @@ Install-Package COVID19API-NET-CLIENT -Version 1.0.0
 ## Example
 
 ```cs
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Covid19.Client;
+using Covid19.Client.Models;
+
 namespace Covid19API.Web.Examples.Console
 {
-    using System.Threading.Tasks;
-    using Covid19API.Web.Models;
-    using Newtonsoft.Json;
-
     class Program
     {
-        public static ICovid19WebAPI API = new Covid19WebAPI();
+        public static ICovid19Client _client = new Covid19Client();
+
         static async Task Main(string[] args)
         {
-           await GetFullReportAsync();
+            FullReport report = await _client.GetFullReportAsync("Zimbabwe");
+            report.ToJson();
+
+            System.Console.ReadLine();
         }
 
         static async Task GetFullReportAsync()
         {
-            FullReport fullReport = await API.GetFullReportAsync("Germany");
+            FullReport fullReport = await _client.GetFullReportAsync("Zimbabwe");
             fullReport.ToJson();
         }
 
         static async Task GetLocationsAsync()
         {
-            Locations locations = await API.GetLocationsAsync();
+            Locations locations = await _client.GetLocationsAsync();
             locations.ToJson();
         }
 
         static async Task GetLatestReportAsync(string country)
         {
-            LatestReport latestReport = await API.GetLatestReportAsync(country);
+            LatestReport latestReport = await _client.GetLatestReportAsync(country);
             latestReport.ToJson();
         }
 
-        static async Task GetReportsAsync(string country)
-        {
-            Reports reports = await API.GetReportsAsync();
-            reports.ToJson();
-        }
     }
 
     public static class JsonDumper
@@ -69,11 +69,12 @@ namespace Covid19API.Web.Examples.Console
         }
     }
 }
+
 ```
 
 ## WebApi and MVC
 
-Using Microsoft's IoC
+Using Microsoft's Built-in DI Container
 
 ```cs
 public void ConfigureServices(IServiceCollection services)
@@ -82,11 +83,9 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-Inject the ```ICovid19WebAPI``` interface.
-
 ```cs
 using System.Threading.Tasks;
-using Covid19API.Web;
+using Covid19.Client;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -95,18 +94,19 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class ExamplesController: ControllerBase
     {
-        private readonly ICovid19WebAPI aPI;
 
-        public ExamplesController(ICovid19WebAPI aPI)
+        private readonly ICovid19Client _covid19Client;
+
+        public ExamplesController(ICovid19Client covid19Client)
         {
-            this.aPI = aPI ?? throw new System.ArgumentNullException(nameof(aPI));
+            _covid19Client = covid19Client;
         }
 
         [HttpGet]
         [Route("locations")]
         public async Task<ActionResult> GetLocations()
         {
-            var locations = await this.aPI.GetLocationsAsync();
+            var locations = await _covid19Client.GetLocationsAsync();
             return Ok(locations);
         }
     }

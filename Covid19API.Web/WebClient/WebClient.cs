@@ -1,12 +1,12 @@
-﻿namespace Covid19API.Web
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using Covid19.Client.Models;
+
+namespace Covid19.Client
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Net.Http;
-    using System.Threading;
-    using System.Threading.Tasks;
-
-
     internal sealed class WebClient : IWebClient
     {
 

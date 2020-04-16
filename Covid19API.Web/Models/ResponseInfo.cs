@@ -1,8 +1,8 @@
-namespace Covid19API.Web
-{
-    using System.Net;
-    using System.Net.Http.Headers;
+using System.Net;
+using System.Net.Http.Headers;
 
+namespace Covid19.Client.Models
+{
     public class ResponseInfo
     {
         public HttpResponseHeaders Headers { get; set; }

@@ -1,4 +1,4 @@
-namespace Covid19API.Web.Models
+namespace Covid19.Client.Models
 {
     public abstract class ResponseBase
     {

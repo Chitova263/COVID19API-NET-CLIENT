@@ -1,10 +1,11 @@
-namespace Covid19API.Web
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Threading;
-    using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using Covid19.Client.Models;
 
+namespace Covid19.Client
+{
     internal interface IWebClient: IDisposable
     {
         /// <summary>

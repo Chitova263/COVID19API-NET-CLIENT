@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Covid19API.Web;
+using Covid19.Client;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -8,18 +8,19 @@ namespace WebApi.Controllers
     [Route("api/[controller]")]
     public class ExamplesController: ControllerBase
     {
-        private readonly ICovid19WebAPI aPI;
 
-        public ExamplesController(ICovid19WebAPI aPI)
+        private readonly ICovid19Client _covid19Client;
+
+        public ExamplesController(ICovid19Client covid19Client)
         {
-            this.aPI = aPI ?? throw new System.ArgumentNullException(nameof(aPI));
+            _covid19Client = covid19Client;
         }
 
         [HttpGet]
         [Route("locations")]
         public async Task<ActionResult> GetLocations()
         {
-            var locations = await this.aPI.GetLocationsAsync();
+            var locations = await _covid19Client.GetLocationsAsync();
             return Ok(locations);
         }
     }

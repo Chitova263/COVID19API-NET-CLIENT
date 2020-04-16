@@ -1,10 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <ItemGroup>
-    <ProjectReference Include="..\..\Covid19API.Web\Covid19API.Web.csproj" />
-  </ItemGroup>
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Covid19API.Web\Covid19.Client.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

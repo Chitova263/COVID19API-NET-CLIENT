@@ -1,8 +1,8 @@
-namespace Covid19API.Web
+using System;
+using System.Linq;
+
+namespace Covid19.Client
 {
-    using System;
-    using System.Linq;
-    
     public static class Validators
     {
         public static void EnsureTimestampAndHeadersMatch(string[] deaths, string[] confirmed)
