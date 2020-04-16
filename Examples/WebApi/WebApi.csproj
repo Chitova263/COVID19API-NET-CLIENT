@@ -5,7 +5,10 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Covid19API.Web\Covid19.Client.csproj">
+    
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Covid19.Client\Covid19.Client.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>
