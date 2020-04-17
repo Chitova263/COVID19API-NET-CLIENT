@@ -77,8 +77,6 @@ namespace Covid19API.Web.Examples.Console
 
 ## WebApi and MVC
 
-Using Microsoft's Built-in DI Container
-
 ```cs
 public void ConfigureServices(IServiceCollection services)
 {
