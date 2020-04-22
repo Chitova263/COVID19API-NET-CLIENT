@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
     <Authors>Nigel Mukandi</Authors>
     <Copyright>MIT</Copyright>
     <Owners>Nigel Mukandi</Owners>
