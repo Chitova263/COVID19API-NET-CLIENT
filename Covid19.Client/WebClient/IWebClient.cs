@@ -14,6 +14,6 @@ namespace Covid19.Client
         /// <param name="url"></param>
         /// <param name="headers"></param>
         /// <returns></returns>
-        Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, Dictionary<string, string> headers = null,  CancellationToken cancellationToken = default);
+        Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, Dictionary<string, string> headers = null,  CancellationToken cancellationToken = default(CancellationToken));
     }
 }

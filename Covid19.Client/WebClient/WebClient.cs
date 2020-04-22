@@ -17,7 +17,7 @@ namespace Covid19.Client
             _httpClient = new HttpClient();
         }
 
-        public async Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, Dictionary<string, string> headers = null, CancellationToken cancellationToken = default)
+        public async Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, Dictionary<string, string> headers = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             Validators.EnsureUrlIsValid(url);
 
