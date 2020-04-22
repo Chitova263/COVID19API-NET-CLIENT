@@ -17,12 +17,9 @@ namespace Covid19.Client
             _httpClient = new HttpClient();
         }
 
-        public async Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, Dictionary<string, string> headers = null, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, CancellationToken cancellationToken = default)
         {
             Validators.EnsureUrlIsValid(url);
-
-            if (headers != null)
-                AddHeaders(headers);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
 
@@ -42,29 +39,6 @@ namespace Covid19.Client
                 },
                 content
             );
-        }
-
-        //private static WebHeaderCollection ConvertHeaders(HttpResponseHeaders headers)
-        //{
-        //    WebHeaderCollection newHeaders = new WebHeaderCollection();
-        //    foreach (KeyValuePair<string, IEnumerable<string>> headerPair in headers)
-        //    {
-        //        foreach (string headerValue in headerPair.Value)
-        //        {
-        //            newHeaders.Add(headerPair.Key, headerValue);
-        //        }
-        //    }
-        //    return newHeaders;
-        //}
-
-        private void AddHeaders(Dictionary<string, string> headers)
-        {
-            _httpClient.DefaultRequestHeaders.Clear();
-
-            foreach (KeyValuePair<string, string> headerPair in headers)
-            {
-                _httpClient.DefaultRequestHeaders.TryAddWithoutValidation(headerPair.Key, headerPair.Value);
-            }
         }
 
         public void Dispose()

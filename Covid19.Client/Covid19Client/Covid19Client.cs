@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Covid19.Client.Models;
+using MoreLinq;
 using TinyCsvParser.Tokenizer.RFC4180;
 
 namespace Covid19.Client
@@ -30,10 +30,10 @@ namespace Covid19.Client
             GC.SuppressFinalize(this);
         }
 
-        public async Task<Locations> GetLocationsAsync(Dictionary<string, string> headers = default, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<Locations> GetLocationsAsync(CancellationToken cancellationToken = default)
         {
     
-            Tuple<ResponseInfo, string> response =  await _webClient.DownloadAsync(global_locations_url, headers, cancellationToken)
+            Tuple<ResponseInfo, string> response =  await _webClient.DownloadAsync(global_locations_url, cancellationToken)
                 .ConfigureAwait(false);
 
             Locations locations = new Locations();
@@ -61,7 +61,7 @@ namespace Covid19.Client
             return locations;    
         }
 
-        public async Task<LatestReport> GetLatestReportAsync(string country, CancellationToken cancellationToken = default(CancellationToken), Dictionary<string, string> headers = null)
+        public async Task<LatestReport> GetLatestReportAsync(string country, CancellationToken cancellationToken = default)
         {
             Tuple<ResponseInfo, string>[] response = await Task.WhenAll(
                     _webClient.DownloadAsync(global_deaths_url),
@@ -131,7 +131,7 @@ namespace Covid19.Client
             return latestReport;
         }
 
-        public async Task<FullReport> GetFullReportAsync(string country, CancellationToken cancellationToken = default(CancellationToken), Dictionary<string, string> headers = null)
+        public async Task<FullReport> GetFullReportAsync(string country, CancellationToken cancellationToken = default)
         {
             Tuple<ResponseInfo, string>[] response = await Task.WhenAll(
                     _webClient.DownloadAsync(global_deaths_url),
