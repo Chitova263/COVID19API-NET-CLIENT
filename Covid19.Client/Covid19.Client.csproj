@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Authors>Nigel Mukandi</Authors>
     <Copyright>MIT</Copyright>
     <Owners>Nigel Mukandi</Owners>
