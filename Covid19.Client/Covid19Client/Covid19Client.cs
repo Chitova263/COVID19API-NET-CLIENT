@@ -30,7 +30,7 @@ namespace Covid19.Client
             GC.SuppressFinalize(this);
         }
 
-        public async Task<Locations> GetLocationsAsync(Dictionary<string, string> headers = default, CancellationToken cancellationToken = default)
+        public async Task<Locations> GetLocationsAsync(Dictionary<string, string> headers = default, CancellationToken cancellationToken = default(CancellationToken))
         {
     
             Tuple<ResponseInfo, string> response =  await _webClient.DownloadAsync(global_locations_url, headers, cancellationToken)
@@ -61,7 +61,7 @@ namespace Covid19.Client
             return locations;    
         }
 
-        public async Task<LatestReport> GetLatestReportAsync(string country, CancellationToken cancellationToken = default, Dictionary<string, string> headers = default)
+        public async Task<LatestReport> GetLatestReportAsync(string country, CancellationToken cancellationToken = default(CancellationToken), Dictionary<string, string> headers = null)
         {
             Tuple<ResponseInfo, string>[] response = await Task.WhenAll(
                     _webClient.DownloadAsync(global_deaths_url),
@@ -131,7 +131,7 @@ namespace Covid19.Client
             return latestReport;
         }
 
-        public async Task<FullReport> GetFullReportAsync(string country, CancellationToken cancellationToken = default, Dictionary<string, string> headers = null)
+        public async Task<FullReport> GetFullReportAsync(string country, CancellationToken cancellationToken = default(CancellationToken), Dictionary<string, string> headers = null)
         {
             Tuple<ResponseInfo, string>[] response = await Task.WhenAll(
                     _webClient.DownloadAsync(global_deaths_url),
