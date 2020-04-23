@@ -80,6 +80,8 @@ namespace Covid19API.Web.Examples.Console
 ## WebApi and MVC
 
 ```cs
+using Covid19.Client;
+
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddCovid19API();
