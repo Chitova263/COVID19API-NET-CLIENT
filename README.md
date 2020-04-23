@@ -4,7 +4,7 @@ A .NET Client for the Corona Virus COVID-19 (2019-nCoV) [Data Repository](https:
 
 [![Build Status](https://travis-ci.com/Chitova263/COVID19API-NET-CLIENT.svg?branch=master)](https://travis-ci.com/Chitova263/COVID19API-NET-CLIENT)
 [![Nuget](https://img.shields.io/nuget/v/COVID19API-NET?style=flat-square)](https://www.nuget.org/packages/COVID19API-NET-CLIENT/)
-[![Nuget](https://img.shields.io/nuget/dt/COVID19API-NET?color=green&style=flat-square)(https://www.nuget.org/packages/COVID19API-NET-CLIENT/)
+[![Nuget](https://img.shields.io/nuget/dt/COVID19API-NET?color=green&style=flat-square)](https://www.nuget.org/packages/COVID19API-NET-CLIENT/)
 
 
 ### What is COVID-19
