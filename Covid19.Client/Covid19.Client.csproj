@@ -10,7 +10,7 @@
     <Title>COVID19API-NET</Title>
     <Description>A .NET Client for the Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</Description>
     <PackageId>COVID19API-NET</PackageId>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.0.1</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
   </PropertyGroup>
   <ItemGroup>
