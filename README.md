@@ -72,7 +72,7 @@ namespace Covid19API.Web.Examples.Console
 
 ### Find Location
 
-You can find locations using ```ICovid19Client.GetLocationsAsync(Func<Location, bool> predicate)``` 
+You can find locations 
 
 ```cs
 static async Task Main(string[] args)
