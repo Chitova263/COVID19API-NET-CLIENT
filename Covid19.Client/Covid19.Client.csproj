@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <LangVersion>8.0</LangVersion> 
+    <LangVersion>7.3</LangVersion> 
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Nigel Mukandi</Authors>
     <Copyright>MIT</Copyright>
@@ -10,7 +10,7 @@
     <Title>COVID19API-NET</Title>
     <Description>A .NET Client for the Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</Description>
     <PackageId>COVID19API-NET</PackageId>
-    <PackageVersion>2.0.1</PackageVersion>
+    <PackageVersion>2.0.2</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
   </PropertyGroup>
   <ItemGroup>
