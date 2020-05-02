@@ -18,7 +18,7 @@ namespace Covid19.Client
         /// <param name="predicate"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate = default, CancellationToken cancellationToken = default);
+        Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Gets the Timeseries data.

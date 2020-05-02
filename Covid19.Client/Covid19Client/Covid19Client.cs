@@ -51,7 +51,7 @@ namespace Covid19.Client
             return list;
         }
 
-        public async Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate = default, CancellationToken cancellationToken = default)
+        public async Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate, CancellationToken cancellationToken = default)
         {
             Tuple<ResponseInfo, Stream> response = await _webClient.DownloadRawAsync(locations_url, cancellationToken)
                 .ConfigureAwait(false);
@@ -116,7 +116,7 @@ namespace Covid19.Client
                 .SelectMany(x => x.TimeSeriesData)
                 .GroupBy(x => x.Key);
 
-            Dictionary<DateTimeOffset, int?> canada_confirmed_timeseries_data = new Dictionary<DateTimeOffset, int?>();
+            Dictionary<DateTime, int?> canada_confirmed_timeseries_data = new Dictionary<DateTime, int?>();
             int count = 0;
             foreach (var group in canada_confirmed_group)
             {
@@ -148,7 +148,7 @@ namespace Covid19.Client
                 .SelectMany(x => x.TimeSeriesData)
                 .GroupBy(x => x.Key);
 
-            Dictionary<DateTimeOffset, int?> canada_deaths_timeseries_data = new Dictionary<DateTimeOffset, int?>();
+            Dictionary<DateTime, int?> canada_deaths_timeseries_data = new Dictionary<DateTime, int?>();
             count = 0;
             foreach (var group in canada_deaths_group)
             {
@@ -171,10 +171,7 @@ namespace Covid19.Client
             deaths.RemoveAll(x => x.Country_Region.Equals("Canada"));
             deaths.Add(canada_deaths_series);
 
-            //aggregate for canada
-            Console.WriteLine(deaths.Count);
-            Console.WriteLine(confirmed.Count);
-            Console.WriteLine(recovered.Count);
+            //Validate Here
 
             TimeSeriesList<GlobalTimeSeries> list = new TimeSeriesList<GlobalTimeSeries>
             {
@@ -215,9 +212,6 @@ namespace Covid19.Client
             }
 
             //Validate data if invalid throw an exception
-
-            Console.WriteLine(confirmed.Count);
-            Console.WriteLine(deaths.Count);
 
             var list = new TimeSeriesList<UsaTimeSeries>
             {

@@ -9,6 +9,6 @@ namespace Covid19.Client.Models
         public string Country_Region { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
-        public Dictionary<DateTimeOffset, int?> TimeSeriesData { get; set; }
+        public Dictionary<DateTime, int?> TimeSeriesData { get; set; }
     }
 }

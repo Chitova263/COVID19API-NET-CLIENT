@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 using Covid19.Client.Models;
@@ -37,6 +39,8 @@ namespace Covid19.Client
                     StatusCode = response.StatusCode,
                     Reason = response.ReasonPhrase,
                     Headers = response.Headers,
+                    HeaderCollection = ConvertHeaders(response.Headers)
+
                 },
                 content
             );
@@ -58,11 +62,26 @@ namespace Covid19.Client
 
                 new ResponseInfo
                 {
+                    Headers = response.Headers,
+                    HeaderCollection = ConvertHeaders(response.Headers),
                     StatusCode = response.StatusCode,
                     Reason = response.ReasonPhrase,
                 },
                 contentStream
             );
+        }
+
+        private static WebHeaderCollection ConvertHeaders(HttpResponseHeaders headers)
+        {
+            WebHeaderCollection newHeaders = new WebHeaderCollection();
+            foreach (KeyValuePair<string, IEnumerable<string>> headerPair in headers)
+            {
+                foreach (string headerValue in headerPair.Value)
+                {
+                    newHeaders.Add(headerPair.Key, headerValue);
+                }
+            }
+            return newHeaders;
         }
 
         public void Dispose()

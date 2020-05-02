@@ -12,7 +12,6 @@ namespace Covid19.Client
         ///     Downloads data asynchronously from an URL and returns it
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="headers"></param>
         /// <returns></returns>
         Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, CancellationToken cancellationToken = default);
 
@@ -20,7 +19,6 @@ namespace Covid19.Client
         ///     Downloads data asynchronously from an URL and returns it
         /// </summary>
         /// <param name="url"></param>
-        /// <param name="headers"></param>
         /// <returns></returns>
         Task<Tuple<ResponseInfo, Stream>> DownloadRawAsync(string url, CancellationToken cancellationToken = default);
     }

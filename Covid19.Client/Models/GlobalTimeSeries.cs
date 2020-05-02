@@ -12,7 +12,7 @@ namespace Covid19.Client.Models
         public string Country_Region { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
-        public Dictionary<DateTimeOffset, int?> TimeSeriesData { get; set; }
+        public Dictionary<DateTime, int?> TimeSeriesData { get; set; }
     }
 
     public sealed class GlobalTimeSeriesMap : ClassMap<GlobalTimeSeries>
@@ -33,10 +33,10 @@ namespace Covid19.Client.Models
             Map(m => m.TimeSeriesData).ConvertUsing(x =>
             {
                 int count = x.Context.HeaderRecord.Length;
-                Dictionary<DateTimeOffset, int?> dict = new Dictionary<DateTimeOffset, int?>(count);
+                Dictionary<DateTime, int?> dict = new Dictionary<DateTime, int?>(count);
                 for (int i = 4; i < count - 1; i++)
                 {
-                    dict.Add(DateTimeOffset.Parse(x.Context.HeaderRecord[i], CultureInfo.InvariantCulture), x.GetField(i).ParseIntSafely());
+                    dict.Add(DateTime.Parse(x.Context.HeaderRecord[i], CultureInfo.InvariantCulture), x.GetField(i).ParseIntSafely());
                 }
 
                 return dict;
