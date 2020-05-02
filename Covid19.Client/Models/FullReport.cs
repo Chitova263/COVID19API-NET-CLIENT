@@ -6,6 +6,7 @@ namespace Covid19.Client.Models
 {
     public class FullReport: ResponseBase
     {
+        [Obsolete]
         public string Country { get; set; }
         public List<TimeSeriesData> TimeSeries { get; set; }
 

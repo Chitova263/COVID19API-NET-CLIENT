@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +39,29 @@ namespace Covid19.Client
                     Headers = response.Headers,
                 },
                 content
+            );
+        }
+
+        public async Task<Tuple<ResponseInfo, Stream>> DownloadRawAsync(string url, CancellationToken cancellationToken = default)
+        {
+            Validators.EnsureUrlIsValid(url);
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+
+            HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
+                .ConfigureAwait(false);
+
+            var contentStream = await response.Content.ReadAsStreamAsync()
+                .ConfigureAwait(false);
+
+            return new Tuple<ResponseInfo, Stream>(
+
+                new ResponseInfo
+                {
+                    StatusCode = response.StatusCode,
+                    Reason = response.ReasonPhrase,
+                },
+                contentStream
             );
         }
 

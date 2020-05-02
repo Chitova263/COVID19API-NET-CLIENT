@@ -2,7 +2,7 @@ namespace Covid19.Client.Models
 {
     public abstract class ResponseBase
     {
-        public ResponseInfo ResponseInfo { get; private set; }
+        private ResponseInfo ResponseInfo { get; set; }
     
         internal void AddResponseInfo(ResponseInfo info) => ResponseInfo = info;
     }
