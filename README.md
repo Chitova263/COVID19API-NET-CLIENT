@@ -22,11 +22,23 @@ dotnet add package COVID19API-NET --version 2.0.2
 Install-Package COVID19API-NET -Version 2.0.2
 ```
 
-## Example
+## WebApi or MVC
+
+```cs
+using Covid19.Client;
+
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddCovid19API();
+}
+```
+
+## Examples
+
+### Get All Locations
 
 ```cs
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Covid19.Client;
 using Covid19.Client.Models;
 
@@ -38,63 +50,113 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            var timeseries = await _client.TimeSeriesAsync();
-
+            LocationList locationList = await _client.GetLocationsAsync();
+            foreach (var location in locationList.Locations)
+            {
+                System.Console.WriteLine(location.UID);
+                System.Console.WriteLine(location.Country_Region);
+                System.Console.WriteLine(location.Province_State);
+                System.Console.WriteLine(location.ISO2_CountryCode);
+                System.Console.WriteLine(location.ISO3_CountryCode);
+                System.Console.WriteLine(location.FIPS_CountyCode);
+                System.Console.WriteLine(location.Code3);
+                System.Console.WriteLine(location.Latitude);
+                System.Console.WriteLine(location.Longitude);
+                System.Console.WriteLine(location.Population);     
+            }
             System.Console.ReadLine();
         }
     }
-
-    public static class JsonDumper
-    {
-        public static void ToJson(this object obj)
-        {
-            System.Console.WriteLine(
-                Newtonsoft.Json.JsonConvert.SerializeObject(obj, Formatting.Indented)
-            );
-        }
-    }
-}
-
-```
-
-## WebApi and MVC
-
-```cs
-using Covid19.Client;
-
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddCovid19API();
 }
 ```
 
+### Find Location
+
+You can find locations using ```ICovid19Client.GetLocationsAsync(Func<Location, bool> predicate)``` 
+
 ```cs
-using System.Threading.Tasks;
-using Covid19.Client;
-using Microsoft.AspNetCore.Mvc;
-
-namespace WebApi.Controllers
+static async Task Main(string[] args)
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ExamplesController: ControllerBase
-    {
 
-        private readonly ICovid19Client _covid19Client;
+   LocationList locationList = await _client.GetLocationsAsync(x => {
+       return x.Country_Region == "US" && x.Province_State =="Wisconsin";
+   });
+   
+   foreach (var location in locationList.Locations)
+   {
+        System.Console.WriteLine(location.UID);
+        System.Console.WriteLine(location.Country_Region);
+        System.Console.WriteLine(location.Province_State);
+        System.Console.WriteLine(location.ISO2_CountryCode);
+        System.Console.WriteLine(location.ISO3_CountryCode);
+        System.Console.WriteLine(location.FIPS_CountyCode);
+        System.Console.WriteLine(location.Code3);
+        System.Console.WriteLine(location.Latitude);
+        System.Console.WriteLine(location.Longitude);
+        System.Console.WriteLine(location.Population);     
+   }
+}
+```
 
-        public ExamplesController(ICovid19Client covid19Client)
+### Get Global Time Series Data (Except USA)
+
+```cs
+static async Task Main(string[] args)
+{
+   TimeSeriesList<GlobalTimeSeries> timeSeriesList = await _client.GetTimeSeriesAsync();
+
+   // confirmed cases time series
+   var confirmed_cases = timeSeriesList.ConfirmedTimeSeries;
+
+   // recovered cases time series
+   var recovered_cases = timeSeriesList.RecoveredTimeSeries;
+
+   // deaths cases time series
+   var deaths_case = timeSeriesList.DeathsTimeSeries;
+
+   foreach (var item in confirmed_cases)
+   {
+        System.Console.WriteLine(item.Country_Region);
+        System.Console.WriteLine(item.Latitude);
+        System.Console.WriteLine(item.Longitude);
+        System.Console.WriteLine(item.Province_State);
+
+        foreach (var data in item.TimeSeriesData)
         {
-            _covid19Client = covid19Client;
-        }
+            System.Console.WriteLine($"Timestamp: {data.Key}, Cases Recorded: {data.Value}");
+        }    
+   }
+}
+```
 
-        [HttpGet]
-        [Route("locations")]
-        public async Task<ActionResult> GetLocations()
+### Get USA Time Series Data
+
+```cs 
+static async Task Main(string[] args)
+{
+   TimeSeriesList<UsaTimeSeries> timeSeriesList = await _client.GetUSATimeSeriesAsync();
+
+   // confirmed cases time series
+   var confirmed_cases = timeSeriesList.ConfirmedTimeSeries;
+
+   // recovered cases time series
+   var recovered_cases = timeSeriesList.RecoveredTimeSeries;
+
+   // deaths cases time series
+   var deaths_case = timeSeriesList.DeathsTimeSeries;
+
+   foreach (var item in confirmed_cases)
+   {
+        System.Console.WriteLine(item.Country_Region);
+        System.Console.WriteLine(item.Latitude);
+        System.Console.WriteLine(item.Longitude);
+        System.Console.WriteLine(item.Province_State);
+
+        foreach (var data in item.TimeSeriesData)
         {
-            var locations = await _covid19Client.GetLocationsAsync();
-            return Ok(locations);
-        }
-    }
+            System.Console.WriteLine($"Timestamp: {data.Key}, Cases Recorded: {data.Value}");
+        }    
+   }
 }
 ```
 
