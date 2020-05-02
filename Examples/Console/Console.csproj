@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <LangVersion>7.3</LangVersion> 
+    <LangVersion>7.3</LangVersion>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Covid19.Client\Covid19.Client.csproj" />
+    <ProjectReference Include="..\..\Covid19.Client\Covid19.Client.csproj"/>
   </ItemGroup>
 </Project>

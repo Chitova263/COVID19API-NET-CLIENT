@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Covid19.Client;
-using Covid19.Client.Models;
 
 namespace Covid19API.Web.Examples.Console
 {
@@ -11,30 +10,11 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            FullReport report = await _client.GetFullReportAsync("Zimbabwe");
-            report.ToJson();
-
+            var data = await _client.GetUSATimeSeriesAsync();
+            
+            data.ToJson();
             System.Console.ReadLine();
         }
-
-        static async Task GetFullReportAsync()
-        {
-            FullReport fullReport = await _client.GetFullReportAsync("Zimbabwe");
-            fullReport.ToJson();
-        }
-
-        static async Task GetLocationsAsync()
-        {
-            Locations locations = await _client.GetLocationsAsync();
-            locations.ToJson();
-        }
-
-        static async Task GetLatestReportAsync(string country)
-        {
-            LatestReport latestReport = await _client.GetLatestReportAsync(country);
-            latestReport.ToJson();
-        }
-
     }
 
     public static class JsonDumper
@@ -46,6 +26,7 @@ namespace Covid19API.Web.Examples.Console
             );
         }
     }
+
 }
 
 

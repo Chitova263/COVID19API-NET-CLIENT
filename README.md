@@ -38,30 +38,10 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            FullReport report = await _client.GetFullReportAsync("Zimbabwe");
-            report.ToJson();
+            var timeseries = await _client.TimeSeriesAsync();
 
             System.Console.ReadLine();
         }
-
-        static async Task GetFullReportAsync()
-        {
-            FullReport fullReport = await _client.GetFullReportAsync("Zimbabwe");
-            fullReport.ToJson();
-        }
-
-        static async Task GetLocationsAsync()
-        {
-            Locations locations = await _client.GetLocationsAsync();
-            locations.ToJson();
-        }
-
-        static async Task GetLatestReportAsync(string country)
-        {
-            LatestReport latestReport = await _client.GetLatestReportAsync(country);
-            latestReport.ToJson();
-        }
-
     }
 
     public static class JsonDumper

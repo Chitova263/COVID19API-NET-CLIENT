@@ -10,17 +10,16 @@
     <Title>COVID19API-NET</Title>
     <Description>A .NET Client for the Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</Description>
     <PackageId>COVID19API-NET</PackageId>
-    <PackageVersion>2.0.1</PackageVersion>
+    <PackageVersion>2.0.2</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="15.0.5" />
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Polly" Version="7.2.0" />
     <PackageReference Include="TinyCsvParser" Version="2.5.2" />
-    <PackageReference Include="NodaTime" Version="2.4.7" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.3" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebClient\" />

@@ -1,25 +1,35 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Covid19.Client.Models;
+using Microsoft.Extensions.DependencyInjection;
+using TinyCsvParser.Tokenizer.RFC4180;
+
 namespace Covid19.Client
 {
-    using System;
-    using System.Globalization;
-    using System.Linq;
-    using Microsoft.Extensions.DependencyInjection;
-    using TinyCsvParser.Tokenizer.RFC4180;
-
     public static class Extensions
     {
+
+        public static IEnumerable<Location> Filter(this IEnumerable<Location> locations, Func<Location, bool> predicate)
+        {
+            if (predicate == null)
+                return locations;
+            return locations.Where(predicate);
+        }
+
         public static RFC4180Tokenizer Tokenizer => new RFC4180Tokenizer(new Options('"', '\\', ','));
 
-        public static string[] ParseResponse(this string response) 
+        public static string[] ParseResponse(this string response)
         {
             return response
                 .Split(new[] { '\n' }, StringSplitOptions.None);
         }
 
-        public static DateTimeOffset[] ExtractTimestamps(this string[] header)
+        public static DateTimeOffset[] ExtractTimestamps(this string[] header, int count)
         {
             return header
-                .Skip(4)
+                .Skip(count)
                 .Select(x => DateTimeOffset.Parse(x, CultureInfo.InvariantCulture))
                 .ToArray();
         }
