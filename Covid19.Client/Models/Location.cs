@@ -18,7 +18,7 @@ namespace Covid19.Client.Models
         public string Combined_Key { get; set; }
     }
 
-    public sealed class LocationMap : ClassMap<Location>
+    internal sealed class LocationMap : ClassMap<Location>
     {
         public LocationMap()
         {

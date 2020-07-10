@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "dgSpecHash": "jDKMv5qD7adIeGkL+qiFdIlhZtBN/4BtKz8KnUjV2kfPL0RGuNRwsa9zreEdurZzidNZMKOltxtPjH2MqbZPcA==",
+  "success": true,
+  "projectFilePath": "/Users/engmukandi/COVID19API-NET-CLIENT/Covid19.Client/Covid19.Client.csproj",
+  "expectedPackageFiles": [
+    "/Users/engmukandi/.nuget/packages/csvhelper/15.0.5/csvhelper.15.0.5.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/microsoft.bcl.asyncinterfaces/1.1.0/microsoft.bcl.asyncinterfaces.1.1.0.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/microsoft.extensions.dependencyinjection/3.1.3/microsoft.extensions.dependencyinjection.3.1.3.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/3.1.3/microsoft.extensions.dependencyinjection.abstractions.3.1.3.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/microsoft.netcore.platforms/1.1.0/microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/morelinq/3.3.2/morelinq.3.3.2.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/netstandard.library/2.0.3/netstandard.library.2.0.3.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/newtonsoft.json/12.0.3/newtonsoft.json.12.0.3.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/system.runtime.compilerservices.unsafe/4.5.2/system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/system.threading.tasks.extensions/4.5.2/system.threading.tasks.extensions.4.5.2.nupkg.sha512",
+    "/Users/engmukandi/.nuget/packages/tinycsvparser/2.5.2/tinycsvparser.2.5.2.nupkg.sha512"
+  ],
+  "logs": []
+}

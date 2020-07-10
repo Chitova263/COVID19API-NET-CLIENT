@@ -14,7 +14,7 @@ namespace Covid19.Client.Models
         public Dictionary<DateTime, int?> TimeSeriesData { get; set; }
     }
 
-    public sealed class UsaTimeSeriesMap : ClassMap<UsaTimeSeries>
+    internal sealed class UsaTimeSeriesMap : ClassMap<UsaTimeSeries>
     {
         public UsaTimeSeriesMap()
         {

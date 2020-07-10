@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Covid19.Client
 {
-    public static class Validators
+    internal static class Validators
     {
         public static void EnsureTimestampAndHeadersMatch(string[] deaths, string[] confirmed)
         {

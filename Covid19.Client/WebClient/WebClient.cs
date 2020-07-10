@@ -38,9 +38,7 @@ namespace Covid19.Client
                 {
                     StatusCode = response.StatusCode,
                     Reason = response.ReasonPhrase,
-                    Headers = response.Headers,
                     HeaderCollection = ConvertHeaders(response.Headers)
-
                 },
                 content
             );
@@ -62,7 +60,6 @@ namespace Covid19.Client
 
                 new ResponseInfo
                 {
-                    Headers = response.Headers,
                     HeaderCollection = ConvertHeaders(response.Headers),
                     StatusCode = response.StatusCode,
                     Reason = response.ReasonPhrase,
