@@ -17,7 +17,6 @@ namespace Covid19.Client
     {
 
         private readonly IWebClient _webClient;
-
         public static RFC4180Tokenizer Tokenizer => new RFC4180Tokenizer(new Options('"', '\\', ','));
 
         private string global_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";

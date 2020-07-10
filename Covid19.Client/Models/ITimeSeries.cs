@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Covid19.Client.Models
 {
-    public interface ITimeSeries
+    internal interface ITimeSeries
     {
         string Province_State { get; set; }
         string Country_Region { get; set; }
