@@ -8,7 +8,7 @@ using TinyCsvParser.Tokenizer.RFC4180;
 
 namespace Covid19.Client
 {
-    public static class Extensions
+    internal static class Extensions
     {
 
         public static IEnumerable<Location> Filter(this IEnumerable<Location> locations, Func<Location, bool> predicate)
