@@ -31,15 +31,18 @@ namespace Covid19.Client
             _webClient = new WebClient();
         }
 
+        /// <summary>
+        ///     Gets all the locations from data repository.
+        /// <returns></returns>
         public async Task<LocationList> GetLocationsAsync(CancellationToken cancellationToken = default)
         {
-            Tuple<ResponseInfo, Stream> response = await _webClient.DownloadRawAsync(locations_url, cancellationToken)
+            (ResponseInfo responseInfo, Stream stream) = await _webClient.DownloadRawAsync(locations_url, cancellationToken)
                 .ConfigureAwait(false);
 
             LocationList list = new LocationList();
-            list.AddResponseInfo(response.Item1);
+            list.AddResponseInfo(responseInfo);
 
-            using (StreamReader reader = new StreamReader(response.Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<LocationMap>();
@@ -50,15 +53,21 @@ namespace Covid19.Client
             return list;
         }
 
+        /// <summary>
+        ///     Gets all the locations from data repository.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate, CancellationToken cancellationToken = default)
         {
-            Tuple<ResponseInfo, Stream> response = await _webClient.DownloadRawAsync(locations_url, cancellationToken)
+            (ResponseInfo responseInfo, Stream stream) = await _webClient.DownloadRawAsync(locations_url, cancellationToken)
                 .ConfigureAwait(false);
 
             LocationList list = new LocationList();
-            list.AddResponseInfo(response.Item1);
+            list.AddResponseInfo(responseInfo);
 
-            using (StreamReader reader = new StreamReader(response.Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<LocationMap>();
@@ -70,9 +79,15 @@ namespace Covid19.Client
             return list;
         }
 
+
+        /// <summary>
+        ///     Gets the Timeseries data.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<TimeSeriesList<GlobalTimeSeries>> GetTimeSeriesAsync(CancellationToken cancellationToken = default)
         {
-            Tuple<ResponseInfo, Stream>[] response = await Task.WhenAll(
+            (ResponseInfo responseInfo, Stream stream)[] response = await Task.WhenAll(
                 _webClient.DownloadRawAsync(global_confirmed_url),
                 _webClient.DownloadRawAsync(global_deaths_url),
                 _webClient.DownloadRawAsync(global_recoverd_url)
@@ -82,7 +97,7 @@ namespace Covid19.Client
             List<GlobalTimeSeries> deaths = new List<GlobalTimeSeries>();
             List<GlobalTimeSeries> recovered = new List<GlobalTimeSeries>();
 
-            using (StreamReader reader = new StreamReader(response[0].Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(response[0].stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<GlobalTimeSeriesMap>();
@@ -179,14 +194,19 @@ namespace Covid19.Client
                 RecoveredTimeSeries = recovered,
             };
 
-            list.AddResponseInfo(response[0].Item1);
+            list.AddResponseInfo(response[0].responseInfo);
 
             return list;
         }
 
+        /// <summary>
+        ///     Gets the Timeseries data for USA locations only
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<TimeSeriesList<UsaTimeSeries>> GetUSATimeSeriesAsync(CancellationToken cancellationToken = default)
         {
-            Tuple<ResponseInfo, Stream>[] response = await Task.WhenAll(
+            (ResponseInfo responseInfo, Stream stream)[] response = await Task.WhenAll(
                 _webClient.DownloadRawAsync(usa_confirmed_url),
                 _webClient.DownloadRawAsync(usa_deaths_url)
             );
@@ -194,7 +214,7 @@ namespace Covid19.Client
             List<UsaTimeSeries> confirmed = new List<UsaTimeSeries>();
             List<UsaTimeSeries> deaths = new List<UsaTimeSeries>();
 
-            using (StreamReader reader = new StreamReader(response[0].Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(response[0].stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<UsaTimeSeriesMap>();
@@ -202,7 +222,7 @@ namespace Covid19.Client
                     .ToList();
             }
 
-            using (StreamReader reader = new StreamReader(response[1].Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(response[1].stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<UsaTimeSeriesMap>();
@@ -218,7 +238,7 @@ namespace Covid19.Client
                 DeathsTimeSeries = deaths,
             };
 
-            list.AddResponseInfo(response[0].Item1);
+            list.AddResponseInfo(response[0].responseInfo);
 
             return list;
         }

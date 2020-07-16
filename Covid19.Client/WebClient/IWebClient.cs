@@ -13,13 +13,13 @@ namespace Covid19.Client
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, CancellationToken cancellationToken = default);
+        Task<(ResponseInfo, string)> DownloadAsync(string url, CancellationToken cancellationToken = default);
 
         /// <summary>
         ///     Downloads data asynchronously from an URL and returns it
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        Task<Tuple<ResponseInfo, Stream>> DownloadRawAsync(string url, CancellationToken cancellationToken = default);
+        Task<(ResponseInfo, Stream)> DownloadRawAsync(string url, CancellationToken cancellationToken = default);
     }
 }

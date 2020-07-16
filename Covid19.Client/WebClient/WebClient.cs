@@ -20,7 +20,7 @@ namespace Covid19.Client
             _httpClient = new HttpClient();
         }
 
-        public async Task<Tuple<ResponseInfo, string>> DownloadAsync(string url, CancellationToken cancellationToken = default)
+        public async Task<(ResponseInfo, string)> DownloadAsync(string url, CancellationToken cancellationToken = default)
         {
             Validators.EnsureUrlIsValid(url);
 
@@ -29,11 +29,10 @@ namespace Covid19.Client
             HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
                 .ConfigureAwait(false);
 
-            var content = await response.Content.ReadAsStringAsync()
+            String content = await response.Content.ReadAsStringAsync()
                 .ConfigureAwait(false);
 
-
-            return new Tuple<ResponseInfo, string>(
+            return (
                 new ResponseInfo
                 {
                     StatusCode = response.StatusCode,
@@ -44,7 +43,7 @@ namespace Covid19.Client
             );
         }
 
-        public async Task<Tuple<ResponseInfo, Stream>> DownloadRawAsync(string url, CancellationToken cancellationToken = default)
+        public async Task<(ResponseInfo, Stream)> DownloadRawAsync(string url, CancellationToken cancellationToken = default)
         {
             Validators.EnsureUrlIsValid(url);
 
@@ -53,11 +52,10 @@ namespace Covid19.Client
             HttpResponseMessage response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken)
                 .ConfigureAwait(false);
 
-            var contentStream = await response.Content.ReadAsStreamAsync()
+            Stream contentStream = await response.Content.ReadAsStreamAsync()
                 .ConfigureAwait(false);
 
-            return new Tuple<ResponseInfo, Stream>(
-
+            return(
                 new ResponseInfo
                 {
                     HeaderCollection = ConvertHeaders(response.Headers),
