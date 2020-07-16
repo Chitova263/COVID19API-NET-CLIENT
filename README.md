@@ -14,23 +14,12 @@ Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe ac
 
 #### .NET CLI
 ```
-dotnet add package COVID19API-NET --version 2.0.2
+dotnet add package COVID19API-NET --version 3.0.0
 ```
 
 #### PACKAGE MANAGER
 ```
-Install-Package COVID19API-NET -Version 2.0.2
-```
-
-## WebApi or MVC
-
-```cs
-using Covid19.Client;
-
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddCovid19API();
-}
+Install-Package COVID19API-NET -Version 3.0.0
 ```
 
 ## Examples
@@ -70,7 +59,7 @@ namespace Covid19API.Web.Examples.Console
 }
 ```
 
-### Find Location
+### Find Location (Depracated)
 
 You can find locations 
 
