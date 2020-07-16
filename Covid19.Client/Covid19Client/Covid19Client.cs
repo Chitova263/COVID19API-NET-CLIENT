@@ -55,6 +55,7 @@ namespace Covid19.Client
         /// <param name="predicate"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        [Obsolete("Method Has Been Depracated", true)]
         public async Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate, CancellationToken cancellationToken = default)
         {
             (ResponseInfo responseInfo, Stream stream) = await _webClient.DownloadRawAsync(locations_url, cancellationToken)
@@ -103,7 +104,7 @@ namespace Covid19.Client
                     .ToList();
             }
 
-            using (StreamReader reader = new StreamReader(response[1].Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(response[1].stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<GlobalTimeSeriesMap>();
@@ -111,7 +112,7 @@ namespace Covid19.Client
                     .ToList();
             }
 
-            using (StreamReader reader = new StreamReader(response[2].Item2, Encoding.UTF8))
+            using (StreamReader reader = new StreamReader(response[2].stream, Encoding.UTF8))
             using (CsvReader csvReader = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csvReader.Configuration.RegisterClassMap<GlobalTimeSeriesMap>();
@@ -205,8 +206,11 @@ namespace Covid19.Client
         public async Task<TimeSeriesList<UsaTimeSeries>> GetUSATimeSeriesAsync(CancellationToken cancellationToken = default)
         {
             string[] urls = { usa_confirmed_url, usa_deaths_url };
-            var downloads = urls.Select(url => _webClient.DownloadRawAsync(url));
-            var downloadTasks = downloads.ToList();
+            IEnumerable<Task<(ResponseInfo, Stream)>> downloads = urls
+                .Select(url => _webClient.DownloadRawAsync(url));
+
+            List<Task<(ResponseInfo, Stream)>> downloadTasks = downloads.ToList();
+    
             (ResponseInfo responseInfo, Stream stream)[] response =  await Task.WhenAll(downloadTasks);
 
             List<UsaTimeSeries> confirmed = new List<UsaTimeSeries>();

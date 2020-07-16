@@ -18,6 +18,7 @@ namespace Covid19.Client
         /// <param name="predicate"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
+        [Obsolete("Method Has Been Depracated", true)]
         Task<LocationList> GetLocationsAsync(Func<Location, bool> predicate, CancellationToken cancellationToken = default);
 
         /// <summary>

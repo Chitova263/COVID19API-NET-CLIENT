@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Covid19.Client.Models;
-using Microsoft.Extensions.DependencyInjection;
 using TinyCsvParser.Tokenizer.RFC4180;
 
 namespace Covid19.Client
@@ -47,12 +46,5 @@ namespace Covid19.Client
             double result;
             return Double.TryParse(number, out result) ? result : (double?)null;
         }
-
-        public static void AddCovid19Client(this IServiceCollection services)
-        {
-            services.AddTransient<ICovid19Client, Covid19Client>();
-        }
-
-        
     }     
 }
