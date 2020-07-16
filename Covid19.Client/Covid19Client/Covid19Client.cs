@@ -8,7 +8,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Covid19.Client.Models;
 using CsvHelper;
-using MoreLinq;
 using TinyCsvParser.Tokenizer.RFC4180;
 
 namespace Covid19.Client
@@ -26,10 +25,7 @@ namespace Covid19.Client
         private string usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
         private string usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
 
-        public Covid19Client()
-        {
-            _webClient = new WebClient();
-        }
+        public Covid19Client() => _webClient = new WebClient();
 
         /// <summary>
         ///     Gets all the locations from data repository.
@@ -87,12 +83,14 @@ namespace Covid19.Client
         /// <returns></returns>
         public async Task<TimeSeriesList<GlobalTimeSeries>> GetTimeSeriesAsync(CancellationToken cancellationToken = default)
         {
-            (ResponseInfo responseInfo, Stream stream)[] response = await Task.WhenAll(
-                _webClient.DownloadRawAsync(global_confirmed_url),
-                _webClient.DownloadRawAsync(global_deaths_url),
-                _webClient.DownloadRawAsync(global_recoverd_url)
-            );
+            string[] urls = { global_confirmed_url, global_deaths_url, global_recoverd_url };
 
+            IEnumerable<Task<(ResponseInfo, Stream)>> downloads = urls
+                            .Select(url => _webClient.DownloadRawAsync(url));
+
+            List<Task<(ResponseInfo, Stream)>> downloadTasks = downloads.ToList();
+            (ResponseInfo responseInfo, Stream stream)[] response = await Task.WhenAll(downloadTasks);
+        
             List<GlobalTimeSeries> confirmed = new List<GlobalTimeSeries>();
             List<GlobalTimeSeries> deaths = new List<GlobalTimeSeries>();
             List<GlobalTimeSeries> recovered = new List<GlobalTimeSeries>();
@@ -206,10 +204,10 @@ namespace Covid19.Client
         /// <returns></returns>
         public async Task<TimeSeriesList<UsaTimeSeries>> GetUSATimeSeriesAsync(CancellationToken cancellationToken = default)
         {
-            (ResponseInfo responseInfo, Stream stream)[] response = await Task.WhenAll(
-                _webClient.DownloadRawAsync(usa_confirmed_url),
-                _webClient.DownloadRawAsync(usa_deaths_url)
-            );
+            string[] urls = { usa_confirmed_url, usa_deaths_url };
+            var downloads = urls.Select(url => _webClient.DownloadRawAsync(url));
+            var downloadTasks = downloads.ToList();
+            (ResponseInfo responseInfo, Stream stream)[] response =  await Task.WhenAll(downloadTasks);
 
             List<UsaTimeSeries> confirmed = new List<UsaTimeSeries>();
             List<UsaTimeSeries> deaths = new List<UsaTimeSeries>();
