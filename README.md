@@ -59,34 +59,6 @@ namespace Covid19API.Web.Examples.Console
 }
 ```
 
-### Find Location (Depracated)
-
-You can find locations 
-
-```cs
-static async Task Main(string[] args)
-{
-
-   LocationList locationList = await _client.GetLocationsAsync(x => {
-       return x.Country_Region == "US" && x.Province_State =="Wisconsin";
-   });
-   
-   foreach (var location in locationList.Locations)
-   {
-        System.Console.WriteLine(location.UID);
-        System.Console.WriteLine(location.Country_Region);
-        System.Console.WriteLine(location.Province_State);
-        System.Console.WriteLine(location.ISO2_CountryCode);
-        System.Console.WriteLine(location.ISO3_CountryCode);
-        System.Console.WriteLine(location.FIPS_CountyCode);
-        System.Console.WriteLine(location.Code3);
-        System.Console.WriteLine(location.Latitude);
-        System.Console.WriteLine(location.Longitude);
-        System.Console.WriteLine(location.Population);     
-   }
-}
-```
-
 ### Get Global Time Series Data (Except USA)
 
 ```cs
