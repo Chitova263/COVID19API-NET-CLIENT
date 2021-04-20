@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,7 +18,7 @@ namespace Covid19.Client
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public async Task<Result<string>> DownloadAsync(string uri, CancellationToken cancellationToken)
+        public async Task<Result<Stream>> DownloadAsync(string uri, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(uri))
                 throw new ArgumentException($"'{nameof(uri)}' cannot be null or whitespace", nameof(uri));
@@ -30,7 +31,7 @@ namespace Covid19.Client
             if (!res.IsSuccessStatusCode)
                 return Result.Fail($"Error: Network error connection failed");
 
-            var content = await res.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            var content = await res.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             return Result.Ok(content);
         }
 

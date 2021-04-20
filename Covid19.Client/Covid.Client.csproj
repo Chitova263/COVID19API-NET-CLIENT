@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <LangVersion>7.3</LangVersion> 
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>9</LangVersion>
+	  <Nullable>enable</Nullable>  
+    <TargetFramework>net5.0</TargetFramework>
     <Authors>Nigel Mukandi</Authors>
     <Copyright>MIT</Copyright>
     <Owners>Nigel Mukandi</Owners>
@@ -14,13 +15,13 @@
     <PackOnBuild>true</PackOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="CsvHelper" Version="26.1.0" />
+    <PackageReference Include="FluentResults" Version="2.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="TinyCsvParser" Version="2.5.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebClient\" />
-    <Folder Include="Covid19Client\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Covid19WebClient.cs" />

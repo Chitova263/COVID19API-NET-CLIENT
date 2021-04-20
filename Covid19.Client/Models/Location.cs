@@ -3,19 +3,20 @@ using CsvHelper.Configuration;
 
 namespace Covid19.Client.Models
 {
-    public class Location
+    public sealed record Location
     {
-        public string UID { get; set; }
-        public string ISO2_CountryCode { get; set; }
-        public string ISO3_CountryCode { get; set; }
-        public string Code3 { get; set; }
-        public string FIPS_CountyCode { get; set; }
-        public string Country_Region { get; set; }
-        public string Province_State { get; set; }
+        public string? UID { get; set; }
+        public string? Iso2 { get; set; }
+        public string? Iso3 { get; set; }
+        public string? Code3 { get; set; }
+        public string? FIPS { get; set; }
+        public string? Admin2 { get; set; }
+        public string? CountryRegion { get; set; }
+        public string? ProvinceState { get; set; }
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
         public int? Population { get; set; }
-        public string Combined_Key { get; set; }
+        public string? CombinedKey { get; set; }
     }
 
     internal sealed class LocationMap : ClassMap<Location>
@@ -23,14 +24,26 @@ namespace Covid19.Client.Models
         public LocationMap()
         {
             AutoMap(CultureInfo.InvariantCulture);
-            Map(m => m.ISO2_CountryCode).Name("iso2");
-            Map(m => m.ISO3_CountryCode).Name("iso3");
-            Map(m => m.Code3).Name("code3");
-            Map(m => m.FIPS_CountyCode).Name("FIPS");
-            Map(m => m.Latitude).Name("Lat").ConvertUsing(x => x.GetField("Lat").ParseDoubleSafely());        
-            Map(m => m.Longitude).Name("Long_").ConvertUsing(x => x.GetField("Long_").ParseDoubleSafely());
-            Map(m => m.Population).ConvertUsing(x => x.GetField("Population").ParseIntSafely());
+
+            Map(p => p.UID).Name("UID");
+            Map(p => p.Iso2).Name("iso2");
+            Map(p => p.Iso3).Name("iso3");
+            Map(p => p.Code3).Name("code3");
+            Map(p => p.CountryRegion).Name("Country_Region");
+            Map(p => p.CombinedKey).Name("Combined_Key");
+            Map(p => p.ProvinceState).Name("Province_State");
+
+            Map(p => p.Latitude)
+                .Name("Lat")
+                .Convert(p => p.Row.GetField("Lat").ParseDoubleSafely());
+
+            Map(p => p.Longitude)
+                .Name("Long_")
+                .Convert(p => p.Row.GetField("Long_").ParseDoubleSafely());
+
+            Map(p => p.Population)
+                .Convert(p => p.Row.GetField("Population").ParseIntSafely());
         }
     }
-    
+
 }
