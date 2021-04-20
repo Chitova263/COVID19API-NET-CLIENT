@@ -10,7 +10,7 @@ namespace Covid19
 {
     internal sealed class Parser
     {
-        public IEnumerable<TResult> Parse<TResult, TClassMap>(Stream stream)
+        public static IAsyncEnumerable<TResult> ParseAsync<TResult, TClassMap>(Stream stream)
             where TClassMap : ClassMap<TResult>
         {
             if (stream is null)
@@ -22,7 +22,24 @@ namespace Covid19
             csvReader.Context.Configuration.TrimOptions = TrimOptions.Trim;
             csvReader.Context.RegisterClassMap<TClassMap>();
 
-            return csvReader.GetRecords<TResult>();
+            IAsyncEnumerable<TResult>? records = csvReader.GetRecordsAsync<TResult>();
+            return records;
+        }
+
+        public static IEnumerable<TResult> Parse<TResult, TClassMap>(Stream stream)
+            where TClassMap : ClassMap<TResult>
+        {
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            var csvReader = new CsvReader(new StreamReader(stream, Encoding.UTF8), CultureInfo.InvariantCulture);
+            csvReader.Context.Configuration.TrimOptions = TrimOptions.Trim;
+            csvReader.Context.RegisterClassMap<TClassMap>();
+
+            IEnumerable<TResult>? records = csvReader.GetRecords<TResult>();
+            return records;
         }
     }
 }
