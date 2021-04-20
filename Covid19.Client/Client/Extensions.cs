@@ -1,30 +1,32 @@
+using Covid.Client.Models;
 using System;
-using TinyCsvParser.Tokenizer.RFC4180;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Covid19.Client
 {
     internal static class Extensions
     {
-        public static RFC4180Tokenizer Tokenizer => new RFC4180Tokenizer(new Options('"', '\\', ','));
-
-        public static string[] ParseResponse(this string response)
-        {
-            return response
-                .Split(new[] { '\n' }, StringSplitOptions.None);
-        }
-
         public static int? ParseIntSafely(this string number)
         {
-            int result;
-            return Int32.TryParse(number, out result) ? result : (int?)null;
+            return Int32
+                .TryParse(number, out int result) ? result : (int?)null;
         }
 
         public static double? ParseDoubleSafely(this string number)
         {
             if (number == null) return (double?)null;
 
-            double result;
-            return Double.TryParse(number, out result) ? result : (double?)null;
+            return Double.TryParse(number, out double result) ? result : (double?)null;
+        }
+
+        public static Dictionary<DateTime, int?> FilterByDate(this Dictionary<DateTime, int?> data, DateTime startDate, DateTime endDate)
+        {
+            var result = startDate.CompareTo(endDate) == 0
+                ? data.Where(d => d.Key.CompareTo(startDate) == 0)
+                : data.Where(d => d.Key.CompareTo(startDate) >= 0 && d.Key.CompareTo(endDate) <= 0);
+
+            return result.ToDictionary(k => k.Key, v => v.Value);
         }
     }     
 }

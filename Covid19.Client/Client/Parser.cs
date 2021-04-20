@@ -10,7 +10,7 @@ namespace Covid19
 {
     internal sealed class Parser
     {
-        public IEnumerable<TResult> Parse<TResult, TClassMap>(Stream stream)
+        public static IEnumerable<TResult> Parse<TResult, TClassMap>(Stream stream)
             where TClassMap : ClassMap<TResult>
         {
             if (stream is null)

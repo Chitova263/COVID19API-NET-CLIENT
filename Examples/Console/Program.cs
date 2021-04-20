@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Linq;
 using Client;
+using System;
 
 namespace Covid19API.Web.Examples.Console
 {
@@ -11,10 +12,12 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            var data = await _client.GetTimeSeriesAsync();
+            var start = DateTime.UtcNow.Subtract(TimeSpan.FromDays(4));
+            var end = DateTime.UtcNow;
+            var data = await _client.GetTimeSeriesAsync(start, end, "4");
            
             
-            data.Select(o => o.Location).ToJson();
+            data.ToJson();
             System.Console.ReadLine();
         }
     }
