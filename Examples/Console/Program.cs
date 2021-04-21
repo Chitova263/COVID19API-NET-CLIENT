@@ -1,19 +1,24 @@
 ﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Covid19.Client;
+using Client;
 
 namespace Covid19API.Web.Examples.Console
 {
     class Program
     {
-        public static ICovid19Client _client = new Covid19Client();
+        public static Covid19Client _client = new Covid19Client();
 
         static async Task Main(string[] args)
         {
-            var data = await _client.GetUSATimeSeriesAsync();
-            
-            data.ToJson();
-            System.Console.ReadLine();
+            foreach (var location in (await _client.GetLocationsAsync()))
+            {
+                location.ToJson();
+            }
+
+            await foreach (var location in _client.GetLocationsAsAsyncEnumerable())
+            {
+                location.ToJson();
+            }
         }
     }
 

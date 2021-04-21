@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <LangVersion>7.3</LangVersion> 
-    <TargetFramework>netstandard2.0</TargetFramework>
+	  <Nullable>enable</Nullable>  
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <Authors>Nigel Mukandi</Authors>
     <Copyright>MIT</Copyright>
     <Owners>Nigel Mukandi</Owners>
@@ -10,17 +10,18 @@
     <Title>COVID19API-NET</Title>
     <Description>A .NET Client for the Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE</Description>
     <PackageId>COVID19API-NET</PackageId>
-    <PackageVersion>3.0.0</PackageVersion>
+    <PackageVersion>4.0.0</PackageVersion>
     <PackOnBuild>true</PackOnBuild>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="15.0.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="CsvHelper" Version="26.1.0" />
+    <PackageReference Include="FluentResults" Version="2.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Linq.Async" Version="5.0.0" />
     <PackageReference Include="TinyCsvParser" Version="2.5.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WebClient\" />
-    <Folder Include="Covid19Client\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Covid19WebClient.cs" />
