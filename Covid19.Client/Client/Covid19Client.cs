@@ -29,7 +29,6 @@ namespace Client
         public async IAsyncEnumerable<Location> GetLocationsAsAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var result = await _webClient.DownloadAsync(locations_url, cancellationToken).ConfigureAwait(false);
-
             if (result.IsFailed)
             {
                 throw new CovidClientException(result.Errors);
@@ -41,6 +40,7 @@ namespace Client
                 yield return location;
             }
         }
+
         public async Task<IEnumerable<Location>> GetLocationsAsync(CancellationToken cancellationToken = default)
         {
             var result = await _webClient.DownloadAsync(locations_url, cancellationToken).ConfigureAwait(false);
@@ -50,8 +50,7 @@ namespace Client
                 throw new CovidClientException(result.Errors);
             }
 
-            IEnumerable<Location>? locations = Parser.Parse<Location, LocationMap>(result.Value);
-            return locations;
+            return Parser.Parse<Location, LocationMap>(result.Value);
         }
         public async Task<IEnumerable<TimeSeries>?> GetTimeSeriesAsync(CancellationToken cancellationToken = default)
         {
@@ -76,20 +75,19 @@ namespace Client
                 throw new CovidClientException(errors);
             };
 
-            var globalConfirmed = Parser.Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[0].Value)
-                .ToDictionary(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data);
+            var parser = new Parser();
 
-            var globalRecovered = Parser.Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[1].Value)
-                .ToDictionary(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data);
+            var globalConfirmed = Parser
+                .Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[0].Value)
+                .ToDictionary(o => $"{o.CountryOrRegion}-{o.ProvinceOrState}", o => o.Data);
 
-            var globalDeaths = Parser.Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[2].Value)
-                .ToDictionary(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data);
+            var globalRecovered = Parser
+                .Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[1].Value)
+                .ToDictionary(o => $"{o.CountryOrRegion}-{o.ProvinceOrState}", o => o.Data);
+
+            var globalDeaths = Parser
+                .Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[2].Value)
+                .ToDictionary(o => $"{o.CountryOrRegion}-{o.ProvinceOrState}", o => o.Data);
 
             IEnumerable<TimeSeries>? combined = globalConfirmed
                 .Join(
@@ -118,80 +116,11 @@ namespace Client
                     }
                 );
 
-            return combined;
-        }
+            //var usaConfirmed = parser
+            //    .Parse<TimeSeries, TimeSeriesMap>(results[3].Value);
 
-        public async Task<IEnumerable<TimeSeries>?> GetTimeSeriesAsync(
-            DateTime startDate,
-            DateTime endDate,
-            string? locationUID = default,
-            CancellationToken cancellationToken = default)
-        {
-            if (startDate.CompareTo(endDate) > 0)
-            {
-                throw new CovidClientException("StartDate must be earlier than EndDate");
-            }
-
-            var results = await LoadDataAsync(cancellationToken).ConfigureAwait(false);
-            if (results.Any(r => r.IsFailed))
-            {
-                var errors = results
-                    .Where(r => r.IsFailed)
-                    .SelectMany(r => r.Errors);
-
-                throw new CovidClientException(errors);
-            };
-
-            Dictionary<string, Location>? locations = Parser.Parse<Location, LocationMap>(results[5].Value)
-                .ToDictionary(o => o.UID);
-
-            if (locationUID is { } && !locations.ContainsKey(locationUID))
-                return new List<TimeSeries>();
-
-            var globalConfirmed = Parser.Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[0].Value)
-                 .ToDictionary(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data.FilterByDate(startDate, endDate));
-
-            var globalRecovered = Parser.Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[1].Value)
-                .ToDictionary(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data.FilterByDate(startDate, endDate));
-
-            var globalDeaths = Parser.Parse<TimeSeriesRaw, TimeSeriesRawMap>(results[2].Value)
-               .ToDictionary(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data.FilterByDate(startDate, endDate));
-
-            var location = locations.GetValueOrDefault(locationUID);
-
-            IEnumerable<TimeSeries>? combined = globalConfirmed
-                .Join(
-                    globalDeaths,
-                    confirmed => confirmed.Key,
-                    deaths => deaths.Key,
-                    (c, d) => new
-                    {
-                        Location = c.Key,
-                        Confirmed = c.Value,
-                        Deaths = d.Value
-                    }
-                )
-                .Join(
-                    globalRecovered,
-                    cmb => cmb.Location,
-                    recovered => recovered.Key,
-                    (cmb, rec) =>
-                    {
-                        var data = GetDataPoints(cmb.Deaths, cmb.Confirmed, rec.Value);
-                        return new TimeSeries
-                        {
-                            Location = cmb.Location,
-                            Data = data
-                        };
-                    }
-                )
-                .Where(x => BuildLocationName(location?.CountryRegion, location?.ProvinceState).ToLowerInvariant() == x.Location.ToLowerInvariant());
+            //var usaDeaths = parser
+            //    .Parse<TimeSeries, TimeSeriesMap>(results[4].Value)
 
             return combined;
         }
