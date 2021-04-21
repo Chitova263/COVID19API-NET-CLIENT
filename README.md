@@ -14,12 +14,12 @@ Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe ac
 
 #### .NET CLI
 ```
-dotnet add package COVID19API-NET --version 3.0.0
+dotnet add package COVID19API-NET --version 4.0.0
 ```
 
 #### PACKAGE MANAGER
 ```
-Install-Package COVID19API-NET -Version 3.0.0
+Install-Package COVID19API-NET -Version 4.0.0
 ```
 
 ## Examples
@@ -39,86 +39,115 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            LocationList locationList = await _client.GetLocationsAsync();
-            foreach (var location in locationList.Locations)
+            foreach (var location in (await _client.GetLocationsAsync()))
             {
-                System.Console.WriteLine(location.UID);
-                System.Console.WriteLine(location.Country_Region);
-                System.Console.WriteLine(location.Province_State);
-                System.Console.WriteLine(location.ISO2_CountryCode);
-                System.Console.WriteLine(location.ISO3_CountryCode);
-                System.Console.WriteLine(location.FIPS_CountyCode);
-                System.Console.WriteLine(location.Code3);
-                System.Console.WriteLine(location.Latitude);
-                System.Console.WriteLine(location.Longitude);
-                System.Console.WriteLine(location.Population);     
+                location.ToJson();
             }
-            System.Console.ReadLine();
+
+            await foreach (var location in _client.GetLocationsAsAsyncEnumerable())
+            {
+                location.ToJson();
+            }
         }
     }
 }
 ```
+```json
+[
+  {
+    "UID": "4",
+    "Iso2": "AF",
+    "Iso3": "AFG",
+    "Code3": "4",
+    "FIPS": "",
+    "Admin2": "",
+    "CountryRegion": "Afghanistan",
+    "ProvinceState": "",
+    "Latitude": 33.93911,
+    "Longitude": 67.709953,
+    "Population": 38928341,
+    "CombinedKey": "Afghanistan"
+  },
+  {
+    "UID": "8",
+    "Iso2": "AL",
+    "Iso3": "ALB",
+    "Code3": "8",
+    "FIPS": "",
+    "Admin2": "",
+    "CountryRegion": "Albania",
+    "ProvinceState": "",
+    "Latitude": 41.1533,
+    "Longitude": 20.1683,
+    "Population": 2877800,
+    "CombinedKey": "Albania"
+  }
+]
+```
 
-### Get Global Time Series Data (Except USA)
+
+### Get TimeSeries
 
 ```cs
 static async Task Main(string[] args)
 {
-   TimeSeriesList<GlobalTimeSeries> timeSeriesList = await _client.GetTimeSeriesAsync();
+    foreach (var data in (await _client.GetTimeSeriesAsync()))
+    {
+        data.ToJson();
+    }
 
-   // confirmed cases time series
-   var confirmed_cases = timeSeriesList.ConfirmedTimeSeries;
-
-   // recovered cases time series
-   var recovered_cases = timeSeriesList.RecoveredTimeSeries;
-
-   // deaths cases time series
-   var deaths_case = timeSeriesList.DeathsTimeSeries;
-
-   foreach (var item in confirmed_cases)
-   {
-        System.Console.WriteLine(item.Country_Region);
-        System.Console.WriteLine(item.Latitude);
-        System.Console.WriteLine(item.Longitude);
-        System.Console.WriteLine(item.Province_State);
-
-        foreach (var data in item.TimeSeriesData)
-        {
-            System.Console.WriteLine($"Timestamp: {data.Key}, Cases Recorded: {data.Value}");
-        }    
-   }
+    await foreach (var data in _client.GetTimeSeriesAsAsyncEnumerable())
+    {
+        data.ToJson();
+    }
+    
+    DateTime end = DateTime.Now;
+    DateTime start = end.AddDays(-4);
+    foreach (var data in (await _client.GetTimeSeriesAsync(start, end)))
+    {
+        data.ToJson();
+    }
+    
+    DateTime end = DateTime.Now;
+    DateTime start = end.AddDays(-4);
+    string LocationUID = "55"
+    foreach (var location in (await _client.GetTimeSeriesAsync(start, end, locationUID)))
+    {
+        location.ToJson();
+    }
+    
 }
 ```
-
-### Get USA Time Series Data
-
-```cs 
-static async Task Main(string[] args)
-{
-   TimeSeriesList<UsaTimeSeries> timeSeriesList = await _client.GetUSATimeSeriesAsync();
-
-   // confirmed cases time series
-   var confirmed_cases = timeSeriesList.ConfirmedTimeSeries;
-
-   // recovered cases time series
-   var recovered_cases = timeSeriesList.RecoveredTimeSeries;
-
-   // deaths cases time series
-   var deaths_case = timeSeriesList.DeathsTimeSeries;
-
-   foreach (var item in confirmed_cases)
-   {
-        System.Console.WriteLine(item.Country_Region);
-        System.Console.WriteLine(item.Latitude);
-        System.Console.WriteLine(item.Longitude);
-        System.Console.WriteLine(item.Province_State);
-
-        foreach (var data in item.TimeSeriesData)
+```json
+[
+    {
+      "Location": "Afghanistan-",
+      "Data": [
         {
-            System.Console.WriteLine($"Timestamp: {data.Key}, Cases Recorded: {data.Value}");
-        }    
-   }
-}
+          "Date": "2020-01-22T00:00:00",
+          "Confirmed": 0,
+          "Deaths": 0,
+          "Recovered": 0
+        },
+        {
+          "Date": "2020-01-23T00:00:00",
+          "Confirmed": 0,
+          "Deaths": 0,
+          "Recovered": 0
+        },
+        {
+          "Date": "2020-01-24T00:00:00",
+          "Confirmed": 0,
+          "Deaths": 0,
+          "Recovered": 0
+        },
+       ]
+    }
+    ............
+]
+```
+
+
 ```
 
 ## Licence
