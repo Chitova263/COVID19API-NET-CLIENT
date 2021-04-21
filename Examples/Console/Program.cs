@@ -1,10 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
-using System.Linq;
 using Client;
-using System;
-using System.Collections.Generic;
-using Covid19.Client.Models;
 
 namespace Covid19API.Web.Examples.Console
 {
@@ -14,17 +10,15 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            var locations = _client.GetLocationsAsync();
-
-        
-            await foreach (var location in locations)
+            foreach (var location in (await _client.GetLocationsAsync()))
             {
                 location.ToJson();
             }
-            
 
-            locations.ToJson();
-            System.Console.ReadLine();
+            await foreach (var location in _client.GetLocationsAsAsyncEnumerable())
+            {
+                location.ToJson();
+            }
         }
     }
 

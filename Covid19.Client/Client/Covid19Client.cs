@@ -13,7 +13,7 @@ using FluentResults;
 
 namespace Client
 {
-    public sealed class Covid19Client : IDisposable
+    public sealed class Covid19Client : IDisposable, ICovid19Client
     {
         private readonly IWebClient _webClient;
 
@@ -124,7 +124,7 @@ namespace Client
 
         public async Task<IEnumerable<TimeSeries>?> GetTimeSeriesAsync(CancellationToken cancellationToken = default)
         {
-           
+
             var results = await LoadDataAsync(cancellationToken).ConfigureAwait(false);
 
             if (results.Any(r => r.IsFailed))
@@ -223,7 +223,7 @@ namespace Client
                     o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
                     o => o.Data.FilterByDate(startDate, endDate)
                     ).ConfigureAwait(false);
-                
+
             var globalDeaths = await Parser.ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[2].Value)
                .ToDictionaryAsync(
                     o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
@@ -361,8 +361,8 @@ namespace Client
         private string BuildLocationName(string? countryOrRegion, string? provinceOrState)
         {
             return countryOrRegion
-                + (string.IsNullOrWhiteSpace(provinceOrState) 
-                    ? string.Empty 
+                + (string.IsNullOrWhiteSpace(provinceOrState)
+                    ? string.Empty
                     : $"-{provinceOrState}");
         }
 
