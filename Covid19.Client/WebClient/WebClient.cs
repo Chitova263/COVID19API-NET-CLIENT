@@ -9,9 +9,7 @@ namespace Covid19.Client
 {
     internal sealed class WebClient : IWebClient
     {
-        private readonly HttpClient _httpClient;
-
-        public WebClient() => _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new HttpClient();
 
         /// <summary>
         ///     Downloads data asynchronously from an URL and returns it

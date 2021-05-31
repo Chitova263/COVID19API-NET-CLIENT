@@ -24,16 +24,25 @@ namespace Client
         private readonly string usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
         private readonly string usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
 
+        /// <summary>
+        /// Constructs the Covid19Client
+        /// </summary>
         public Covid19Client() => _webClient = new WebClient();
 
+        /// <summary>
+        /// Returns <see cref="IAsyncEnumerable{Location}"></see> of all the locations. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="CovidClientException">
+        /// </exception>
+        /// <returns><see cref="IAsyncEnumerable{Location}"></see> of all the locations.</returns>
         public async IAsyncEnumerable<Location> GetLocationsAsAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var result = await _webClient.DownloadAsync(locations_url, cancellationToken).ConfigureAwait(false);
+            
             if (result.IsFailed)
-            {
                 throw new CovidClientException(result.Errors);
-            }
-
+            
             IAsyncEnumerable<Location>? locations = Parser.ParseAsync<Location, LocationMap>(result.Value);
             await foreach (var location in locations.ConfigureAwait(false))
             {
@@ -41,18 +50,28 @@ namespace Client
             }
         }
 
+        /// <summary>
+        /// Returns <see cref="IEnumerable{Location}"></see> of all the locations. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <exception cref="CovidClientException">
+        /// </exception>
+        /// <returns><see cref="IEnumerable{Location}"></see> of all the locations.</returns>
         public async Task<IEnumerable<Location>> GetLocationsAsync(CancellationToken cancellationToken = default)
         {
             var result = await _webClient.DownloadAsync(locations_url, cancellationToken).ConfigureAwait(false);
 
             if (result.IsFailed)
-            {
                 throw new CovidClientException(result.Errors);
-            }
 
             return Parser.Parse<Location, LocationMap>(result.Value);
         }
 
+        /// <summary>
+        /// Returns time series of all recoveries, deaths, covid cases for all the locations. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Time</returns>
         public async IAsyncEnumerable<TimeSeries> GetTimeSeriesAsAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var results = await LoadDataAsync(cancellationToken).ConfigureAwait(false);
@@ -122,6 +141,11 @@ namespace Client
             }
         }
 
+        /// <summary>
+        /// Returns time series of all recoveries, deaths, covid cases for all the locations. 
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Time</returns>
         public async Task<IEnumerable<TimeSeries>?> GetTimeSeriesAsync(CancellationToken cancellationToken = default)
         {
 
@@ -185,6 +209,12 @@ namespace Client
             return combined;
         }
 
+        /// <summary>
+        /// Returns time series of all recoveries, deaths, covid cases for <paramref name="locationUID"/> from <paramref name="startDate"/>
+        /// to <paramref name="endDate"/>.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Time</returns>
         public async IAsyncEnumerable<TimeSeries>? GetTimeSeriesAsAsyncEnumerable(
             DateTime startDate,
             DateTime endDate,
@@ -267,6 +297,12 @@ namespace Client
             }
         }
 
+        /// <summary>
+        /// Returns time series of all recoveries, deaths, covid cases for <paramref name="locationUID"/> from <paramref name="startDate"/>
+        /// to <paramref name="endDate"/>.
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        /// <returns>Time</returns>
         public async Task<IEnumerable<TimeSeries>?> GetTimeSeriesAsync(
             DateTime startDate,
             DateTime endDate,
