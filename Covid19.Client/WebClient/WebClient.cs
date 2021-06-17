@@ -27,7 +27,7 @@ namespace Covid19.Client
                     .ConfigureAwait(false);
 
             if (!res.IsSuccessStatusCode)
-                return Result.Fail($"Error: Network error connection failed");
+                return Result.Fail($"Connection error");
 
             var content = await res.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
             return Result.Ok(content);

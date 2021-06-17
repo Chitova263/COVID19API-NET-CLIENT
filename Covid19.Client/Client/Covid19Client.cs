@@ -207,7 +207,7 @@ namespace Client
             };
 
             var downloadTasks = uris.Select(uri => _webClient.DownloadAsync(uri, cancellationToken));
-            return Task.WhenAll(downloadTasks);
+            return TaskHelper.WhenAll(downloadTasks);
         }
 
         private string BuildLocationName(string? countryOrRegion, string? provinceOrState)
