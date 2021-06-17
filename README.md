@@ -146,9 +146,6 @@ static async Task Main(string[] args)
 ]
 ```
 
-
-```
-
 ## Licence
 
 The library is released under terms of the [MIT License](https://opensource.org/licenses/MIT)
