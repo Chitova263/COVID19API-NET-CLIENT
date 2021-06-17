@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Covid.Client.Models;
@@ -17,38 +16,17 @@ namespace Client
     {
         private readonly IWebClient _webClient;
 
-        private readonly string global_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
-        private readonly string global_recoverd_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
-        private readonly string global_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
-        private readonly string locations_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv";
-        private readonly string usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
-        private readonly string usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
+        private const string global_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+        private const string global_recoverd_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_recovered_global.csv";
+        private const string global_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv";
+        private const string locations_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/UID_ISO_FIPS_LookUp_Table.csv";
+        private const string usa_confirmed_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv";
+        private const string usa_deaths_url = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_US.csv";
 
         /// <summary>
         /// Constructs the Covid19Client
         /// </summary>
         public Covid19Client() => _webClient = new WebClient();
-
-        /// <summary>
-        /// Returns <see cref="IAsyncEnumerable{Location}"></see> of all the locations. 
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <exception cref="CovidClientException">
-        /// </exception>
-        /// <returns><see cref="IAsyncEnumerable{Location}"></see> of all the locations.</returns>
-        public async IAsyncEnumerable<Location> GetLocationsAsAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            var result = await _webClient.DownloadAsync(locations_url, cancellationToken).ConfigureAwait(false);
-            
-            if (result.IsFailed)
-                throw new CovidClientException(result.Errors);
-            
-            IAsyncEnumerable<Location>? locations = Parser.ParseAsync<Location, LocationMap>(result.Value);
-            await foreach (var location in locations.ConfigureAwait(false))
-            {
-                yield return location;
-            }
-        }
 
         /// <summary>
         /// Returns <see cref="IEnumerable{Location}"></see> of all the locations. 
@@ -65,80 +43,6 @@ namespace Client
                 throw new CovidClientException(result.Errors);
 
             return Parser.Parse<Location, LocationMap>(result.Value);
-        }
-
-        /// <summary>
-        /// Returns time series of all recoveries, deaths, covid cases for all the locations. 
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns>Time</returns>
-        public async IAsyncEnumerable<TimeSeries> GetTimeSeriesAsAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            var results = await LoadDataAsync(cancellationToken).ConfigureAwait(false);
-
-            if (results.Any(r => r.IsFailed))
-            {
-                var errors = results
-                    .Where(r => r.IsFailed)
-                    .SelectMany(r => r.Errors);
-
-                throw new CovidClientException(errors);
-            };
-
-            //TODO: Improve query performance
-            var globalConfirmed = await Parser
-                .ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[0].Value)
-                .ToDictionaryAsync(o => $"{o.CountryOrRegion}-{o.ProvinceOrState}", o => o.Data, cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
-
-            var globalRecovered = await Parser
-                .ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[1].Value)
-                .ToDictionaryAsync(o => $"{o.CountryOrRegion}-{o.ProvinceOrState}", o => o.Data, cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
-
-            var globalDeaths = await Parser
-                .ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[2].Value)
-                .ToDictionaryAsync(o => $"{o.CountryOrRegion}-{o.ProvinceOrState}", o => o.Data, cancellationToken: cancellationToken)
-                .ConfigureAwait(false);
-
-            IAsyncEnumerable<TimeSeries>? combined = globalConfirmed
-                .Join(
-                    globalDeaths,
-                    confirmed => confirmed.Key,
-                    deaths => deaths.Key,
-                    (c, d) => new
-                    {
-                        Location = c.Key,
-                        Confirmed = c.Value,
-                        Deaths = d.Value
-                    }
-                )
-                .Join(
-                    globalRecovered,
-                    cmb => cmb.Location,
-                    recovered => recovered.Key,
-                    (cmb, rec) =>
-                    {
-                        var data = GetDataPoints(cmb.Deaths, cmb.Confirmed, rec.Value);
-                        return new TimeSeries
-                        {
-                            Location = cmb.Location,
-                            Data = data
-                        };
-                    }
-                )
-                .ToAsyncEnumerable();
-
-            //var usaConfirmed = parser
-            //    .Parse<TimeSeries, TimeSeriesMap>(results[3].Value);
-
-            //var usaDeaths = parser
-            //    .Parse<TimeSeries, TimeSeriesMap>(results[4].Value)
-
-            await foreach (var timeSeries in combined)
-            {
-                yield return timeSeries;
-            }
         }
 
         /// <summary>
@@ -207,94 +111,6 @@ namespace Client
             //    .Parse<TimeSeries, TimeSeriesMap>(results[4].Value)
 
             return combined;
-        }
-
-        /// <summary>
-        /// Returns time series of all recoveries, deaths, covid cases for <paramref name="locationUID"/> from <paramref name="startDate"/>
-        /// to <paramref name="endDate"/>.
-        /// </summary>
-        /// <param name="cancellationToken"></param>
-        /// <returns>Time</returns>
-        public async IAsyncEnumerable<TimeSeries>? GetTimeSeriesAsAsyncEnumerable(
-            DateTime startDate,
-            DateTime endDate,
-            string? locationUID = default,
-            [EnumeratorCancellation] CancellationToken cancellationToken = default)
-        {
-            if (startDate.CompareTo(endDate) > 0)
-            {
-                throw new CovidClientException("StartDate must be earlier than EndDate");
-            }
-
-            var results = await LoadDataAsync(cancellationToken).ConfigureAwait(false);
-            if (results.Any(r => r.IsFailed))
-            {
-                var errors = results
-                    .Where(r => r.IsFailed)
-                    .SelectMany(r => r.Errors);
-
-                throw new CovidClientException(errors);
-            };
-
-            Dictionary<string, Location>? locations = Parser.Parse<Location, LocationMap>(results[5].Value)
-                .ToDictionary(o => o.UID);
-
-            if (locationUID is { } && !locations.ContainsKey(locationUID))
-                yield return new TimeSeries();
-
-            var globalConfirmed = await Parser.ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[0].Value)
-                 .ToDictionaryAsync(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data.FilterByDate(startDate, endDate)
-                    ).ConfigureAwait(false);
-
-            var globalRecovered = await Parser.ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[1].Value)
-                .ToDictionaryAsync(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data.FilterByDate(startDate, endDate)
-                    ).ConfigureAwait(false);
-
-            var globalDeaths = await Parser.ParseAsync<TimeSeriesRaw, TimeSeriesRawMap>(results[2].Value)
-               .ToDictionaryAsync(
-                    o => BuildLocationName(o.CountryOrRegion, o.ProvinceOrState),
-                    o => o.Data.FilterByDate(startDate, endDate)
-                    ).ConfigureAwait(false);
-
-            var location = locations.GetValueOrDefault(locationUID);
-
-            IAsyncEnumerable<TimeSeries>? combined = globalConfirmed
-                .Join(
-                    globalDeaths,
-                    confirmed => confirmed.Key,
-                    deaths => deaths.Key,
-                    (c, d) => new
-                    {
-                        Location = c.Key,
-                        Confirmed = c.Value,
-                        Deaths = d.Value
-                    }
-                )
-                .Join(
-                    globalRecovered,
-                    cmb => cmb.Location,
-                    recovered => recovered.Key,
-                    (cmb, rec) =>
-                    {
-                        var data = GetDataPoints(cmb.Deaths, cmb.Confirmed, rec.Value);
-                        return new TimeSeries
-                        {
-                            Location = cmb.Location,
-                            Data = data
-                        };
-                    }
-                )
-                .Where(x => BuildLocationName(location?.CountryRegion, location?.ProvinceState).ToLowerInvariant() == x.Location.ToLowerInvariant())
-                .ToAsyncEnumerable();
-
-            await foreach (var timeSeries in combined)
-            {
-                yield return timeSeries;
-            }
         }
 
         /// <summary>
