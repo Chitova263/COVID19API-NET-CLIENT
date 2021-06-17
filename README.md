@@ -14,12 +14,12 @@ Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe ac
 
 #### .NET CLI
 ```
-dotnet add package COVID19API-NET --version 4.0.0
+dotnet add package COVID19API-NET --version 4.0.1
 ```
 
 #### PACKAGE MANAGER
 ```
-Install-Package COVID19API-NET -Version 4.0.0
+Install-Package COVID19API-NET -Version 4.0.1
 ```
 
 ## Examples
@@ -39,15 +39,8 @@ namespace Covid19API.Web.Examples.Console
 
         static async Task Main(string[] args)
         {
-            foreach (var location in (await _client.GetLocationsAsync()))
-            {
-                location.ToJson();
-            }
-
-            await foreach (var location in _client.GetLocationsAsAsyncEnumerable())
-            {
-                location.ToJson();
-            }
+           IEnumerable<Location> locations = await client.GetLocationsAsync();
+           locations.Dump();
         }
     }
 }
@@ -91,31 +84,14 @@ namespace Covid19API.Web.Examples.Console
 ```cs
 static async Task Main(string[] args)
 {
-    foreach (var data in (await _client.GetTimeSeriesAsync()))
-    {
-        data.ToJson();
-    }
-
-    await foreach (var data in _client.GetTimeSeriesAsAsyncEnumerable())
-    {
-        data.ToJson();
-    }
-    
-    DateTime end = DateTime.Now;
-    DateTime start = end.AddDays(-4);
-    foreach (var data in (await _client.GetTimeSeriesAsync(start, end)))
-    {
-        data.ToJson();
-    }
-    
-    DateTime end = DateTime.Now;
-    DateTime start = end.AddDays(-4);
-    string LocationUID = "55"
-    foreach (var location in (await _client.GetTimeSeriesAsync(start, end, locationUID)))
-    {
-        location.ToJson();
-    }
-    
+   IEnumerable<TimeSeries> timeSeriesForAllLocations = await client.GetTimeSeriesAsync();
+   timeSeriesForAllLocations.Dump();
+     
+    var location = locations.First();
+    var fromDate = DateTime.Now.AddDays(-10);
+    var toDate = DateTime.Now;
+    IEnumerable<TimeSeries> locationTimeSeries = await client.GetTimeSeriesAsync(fromDate, toDate, location.UID);
+    locationTimeSeries.Dump();
 }
 ```
 ```json
