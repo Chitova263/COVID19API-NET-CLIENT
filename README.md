@@ -2,7 +2,7 @@
 
 A .NET Client for the Corona Virus COVID-19 (2019-nCoV) [Data Repository](https://github.com/CSSEGISandData/COVID-19) by [Johns Hopkins CSSE](https://systems.jhu.edu/research/public-health/ncov/) 
 
-[![Build Status](https://travis-ci.com/Chitova263/COVID19API-NET-CLIENT.svg?branch=master)](https://travis-ci.com/Chitova263/COVID19API-NET-CLIENT)
+![](https://github.com/Chitova263/COVID19API-NET-CLIENT/workflows/main/badge.svg)
 [![Nuget](https://img.shields.io/nuget/v/COVID19API-NET?style=flat-square)](https://www.nuget.org/packages/COVID19API-NET/)
 [![Nuget](https://img.shields.io/nuget/dt/COVID19API-NET?color=green&style=flat-square)](https://www.nuget.org/packages/COVID19API-NET/)
 
