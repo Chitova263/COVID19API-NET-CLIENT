@@ -14,7 +14,7 @@ namespace Examples
             var client = new Covid19Client();
 
             IEnumerable<Location> locations = await client.GetLocationsAsync();
-            locations.First().Dump();
+            locations.Dump();
 
             IEnumerable<TimeSeries> timeSeriesForAllLocations = await client.GetTimeSeriesAsync();
             timeSeriesForAllLocations.Dump();
