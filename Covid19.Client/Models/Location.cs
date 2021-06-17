@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Covid19.Client;
 using CsvHelper.Configuration;
 
 namespace Covid.Client.Models

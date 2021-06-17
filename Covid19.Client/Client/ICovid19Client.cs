@@ -1,5 +1,4 @@
 ﻿using Covid.Client.Models;
-using Covid19.Client.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading;
