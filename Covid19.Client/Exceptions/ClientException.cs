@@ -1,7 +1,6 @@
 ﻿using FluentResults;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace Covid19
 {
@@ -17,17 +16,6 @@ namespace Covid19
         {
         }
 
-        public CovidClientException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected CovidClientException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public CovidClientException(IEnumerable<Error> errors)
-        {
-            Errors = errors;
-        }
+        public CovidClientException(IEnumerable<Error> errors) => Errors = errors;
     }
 }

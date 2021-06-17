@@ -1,35 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Covid19.Client
 {
     internal static class Extensions
     {
-        public async static Task<IEnumerable<T>> All<T>(this Task task IEnumerable<Task<T>> tasks)
-        {
-            var taskResult = Task.WhenAll(tasks);
-            try
-            {
-                return await taskResult; 
-            }
-            catch (Exception)
-            {
-                
-            }
-
-            throw taskResult.Exception ?? new Exception("Something wrong happened!");
-        }
-
-        public static int? ParseIntSafely(this string number) => Int32
+        public static int? ParseIntSafely(this string number) => int
                 .TryParse(number, out int result) ? result : (int?)null;
 
         public static double? ParseDoubleSafely(this string number)
         {
-            if (number == null) return (double?)null;
+            if (number == null) return null;
 
-            return Double.TryParse(number, out double result) ? result : (double?)null;
+            return double.TryParse(number, out double result) ? result : (double?)null;
         }
 
         public static Dictionary<DateTime, int?> FilterByDate(this Dictionary<DateTime, int?> data, DateTime startDate, DateTime endDate)
