@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using CsvHelper.Configuration;
 
-namespace Covid19.Client.Models
+namespace Covid.Client.Models
 {
     public sealed record Location
     {
