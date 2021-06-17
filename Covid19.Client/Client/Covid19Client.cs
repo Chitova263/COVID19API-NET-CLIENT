@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Covid.Client.Models;
 using Covid19;
 using Covid19.Client;
-using Covid19.Client.Models;
 using FluentResults;
 
 namespace Client
