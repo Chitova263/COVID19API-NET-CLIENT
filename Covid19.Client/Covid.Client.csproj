@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
 	<Nullable>enable</Nullable>  
-    <TargetFrameworks>net5.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <Authors>Nigel Mukandi</Authors>
     <Copyright>MIT</Copyright>
     <Owners>Nigel Mukandi</Owners>
